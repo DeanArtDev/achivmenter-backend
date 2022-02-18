@@ -3,6 +3,7 @@ import { config, DotenvConfigOutput, DotenvParseOutput } from "dotenv";
 import { inject, injectable } from "inversify";
 import { dependenciesType } from "../dependencies.types";
 import { ILogger } from "../logger";
+import { DEV_MODE } from "../consts";
 import envVariable from "./env.variable";
 import "reflect-metadata";
 
@@ -20,5 +21,9 @@ export default class ConfigService implements IConfigService {
 
   public get(key: envVariable): string {
     return this.config[key];
+  }
+
+  public get isDevelopmentMode(): boolean {
+    return this.get(envVariable.NODE_ENV) === DEV_MODE;
   }
 }

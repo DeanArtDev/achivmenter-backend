@@ -1,3 +1,4 @@
 export interface IApp {
-    init(): void
+  init(): Promise<void>;
+  close(): Promise<void>;
 }

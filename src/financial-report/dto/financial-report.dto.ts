@@ -1,39 +1,14 @@
-import { FinancialPartDTOTypes, FinancialPeriodDTOTypes } from "../types";
-
-const FinancialPart = {
-  id: { type: "string" },
-  income: { type: "number" },
-  common: { type: "number" },
-  piggyBank: { type: "number" },
-  free: { type: "number" },
+export type FinancialReportDTO = {
+  period: FinancialPeriodDTO;
+  parts: FinancialPartDTO[];
 };
-
-const FinancialPeriod = {
-  month: { type: "number" },
-  partCount: { type: "number" },
+export type FinancialPeriodDTO = {
+  month: number;
+  partCount: number;
 };
-
-export const FinancialPeriodResponseDTO = {
-  type: "object",
-  required: ["id", "period", "parts"],
-  properties: getFinancialReport(),
+export type FinancialPartDTO = {
+  income: number;
+  common: number;
+  piggyBank: number;
+  free: number;
 };
-
-function getFinancialReport(
-  partRequired?: (keyof FinancialPartDTOTypes)[],
-  periodRequired?: (keyof FinancialPeriodDTOTypes)[],
-) {
-  return {
-    id: { type: "string" },
-    parts: {
-      type: "array",
-      required: partRequired ?? ["id", "income", "common", "piggyBank", "free"],
-      item: FinancialPart,
-    },
-    period: {
-      type: "object",
-      required: periodRequired ?? ["month", "partCount"],
-      properties: FinancialPeriod,
-    },
-  };
-}

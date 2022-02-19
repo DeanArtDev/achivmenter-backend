@@ -22,10 +22,8 @@ model FinancialPartModel {
   common            Int                  @db.SmallInt()
   piggyBank         Int                  @db.SmallInt()
   free              Int                  @db.SmallInt()
-  financialReportId Int                  @unique
+  financialReportId Int                  
   FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id])
-
-  @@map("FiancialPartModel")
 }
 
 model FinancialReportModel {

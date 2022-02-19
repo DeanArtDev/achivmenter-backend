@@ -10,7 +10,7 @@ CREATE TABLE "FinancialPeriodModel" (
 );
 
 -- CreateTable
-CREATE TABLE "FiancialPartModel" (
+CREATE TABLE "FinancialPartModel" (
     "id" SERIAL NOT NULL,
     "income" INTEGER NOT NULL,
     "common" SMALLINT NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE "FiancialPartModel" (
     "free" SMALLINT NOT NULL,
     "financialReportId" INTEGER NOT NULL,
 
-    CONSTRAINT "FiancialPartModel_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "FinancialPartModel_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -32,11 +32,8 @@ CREATE TABLE "FinancialReportModel" (
 -- CreateIndex
 CREATE UNIQUE INDEX "FinancialPeriodModel_financialReportId_key" ON "FinancialPeriodModel"("financialReportId");
 
--- CreateIndex
-CREATE UNIQUE INDEX "FiancialPartModel_financialReportId_key" ON "FiancialPartModel"("financialReportId");
-
 -- AddForeignKey
 ALTER TABLE "FinancialPeriodModel" ADD CONSTRAINT "FinancialPeriodModel_financialReportId_fkey" FOREIGN KEY ("financialReportId") REFERENCES "FinancialReportModel"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "FiancialPartModel" ADD CONSTRAINT "FiancialPartModel_financialReportId_fkey" FOREIGN KEY ("financialReportId") REFERENCES "FinancialReportModel"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "FinancialPartModel" ADD CONSTRAINT "FinancialPartModel_financialReportId_fkey" FOREIGN KEY ("financialReportId") REFERENCES "FinancialReportModel"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

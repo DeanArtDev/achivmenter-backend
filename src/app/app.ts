@@ -2,7 +2,7 @@ import Fastify, { FastifyInstance } from "fastify";
 import { inject, injectable } from "inversify";
 import { IApp } from "./app.interface";
 import { dependenciesType } from "../dependencies.types";
-import { IFinancialReportController } from "../financial-report";
+import { IFinancialReportController } from "../financial-report/controller";
 import { IConfigService, envVariable } from "../config";
 import { ILogger } from "../logger";
 import { IDataBaseService } from "../database";

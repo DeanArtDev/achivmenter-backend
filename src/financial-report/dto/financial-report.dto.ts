@@ -1,9 +1,12 @@
+import { UniqID } from "../../types/common.types";
+
 export type FinancialReportDTO = {
   period: FinancialPeriodDTO;
   parts: FinancialPartDTO[];
 };
 export type FinancialPeriodDTO = {
   month: number;
+  year: number;
   partCount: number;
 };
 export type FinancialPartDTO = {
@@ -11,4 +14,9 @@ export type FinancialPartDTO = {
   common: number;
   piggyBank: number;
   free: number;
+};
+
+export type FinancialResponseDTO = FinancialReportDTO & {
+  id: UniqID;
+  parts: FinancialPartDTO & { id: UniqID };
 };

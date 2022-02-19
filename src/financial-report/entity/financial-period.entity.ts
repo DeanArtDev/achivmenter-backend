@@ -1,3 +1,3 @@
 export default class FinancialPeriod {
-  constructor(private readonly month: number, private readonly partCont: number) {}
+  constructor(public readonly month: number, public readonly partCount: number, public readonly year: number) {}
 }

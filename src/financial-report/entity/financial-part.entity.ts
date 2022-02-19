@@ -1,8 +1,8 @@
 export default class FinancialPart {
   constructor(
-    private readonly income: number,
-    private readonly common: number,
-    private readonly piggyBank: number,
-    private readonly free: number,
+    public readonly income: number,
+    public readonly common: number,
+    public readonly piggyBank: number,
+    public readonly free: number,
   ) {}
 }

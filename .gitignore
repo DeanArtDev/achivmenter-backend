@@ -1,3 +1,5 @@
 /dist
 .vscode
+# turn in on when in will be deploed to a server
+# .env 
 node_modules

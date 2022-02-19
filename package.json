@@ -8,10 +8,13 @@
   "scripts": {
     "build": "tsc",
     "dev": "nodemon",
+    "db:start": "sh runpg.sh",
+    "db:stop": "sh stoppg.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^3.9.2",
     "dotenv": "^16.0.0",
     "fastify": "^3.27.1",
     "inversify": "^6.0.1",
@@ -21,6 +24,7 @@
   "devDependencies": {
     "@types/node": "^17.0.17",
     "nodemon": "^2.0.15",
+    "prisma": "^3.9.2",
     "ts-node": "^10.5.0",
     "typescript": "^4.5.5"
   }

@@ -1,10 +1,11 @@
 import Fastify, { FastifyInstance } from "fastify";
 import { inject, injectable } from "inversify";
 import { IApp } from "./app.interface";
-import { IFinancialReportController } from "../financial-report";
 import { dependenciesType } from "../dependencies.types";
+import { IFinancialReportController } from "../financial-report";
 import { IConfigService, envVariable } from "../config";
 import { ILogger } from "../logger";
+import { IDataBaseService } from "../database";
 import "reflect-metadata";
 @injectable()
 export class App implements IApp {
@@ -22,7 +23,8 @@ export class App implements IApp {
 
   constructor(
     @inject(dependenciesType.IConfigService) private config: IConfigService,
-    @inject(dependenciesType.ILogger) private logger: ILogger,
+    @inject(dependenciesType.IDataBaseService) private readonly db: IDataBaseService,
+    @inject(dependenciesType.ILogger) private readonly logger: ILogger,
     @inject(dependenciesType.IFinancialReportController) private financialReportController: IFinancialReportController,
   ) {
     this.app = Fastify();
@@ -31,6 +33,7 @@ export class App implements IApp {
   public async init(): Promise<void> {
     try {
       this.bindRouters();
+      await this.db.connect();
       const address = await this.app.listen(this.config.get(envVariable.APP_PORT));
       this.logger.log(
         `[APP] Server start listening to ${address} ${

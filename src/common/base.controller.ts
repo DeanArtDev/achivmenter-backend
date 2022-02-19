@@ -7,6 +7,6 @@ import "reflect-metadata";
 
 @injectable()
 export default class BaseController implements IBaseController {
-  constructor(@inject(dependenciesType.ILogger) private logger: ILogger) {}
+  constructor(@inject(dependenciesType.ILogger) private readonly logger: ILogger) {}
 
 }

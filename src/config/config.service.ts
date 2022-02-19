@@ -11,10 +11,10 @@ import "reflect-metadata";
 export default class ConfigService implements IConfigService {
   private config: DotenvParseOutput;
 
-  constructor(@inject(dependenciesType.ILogger) private logger: ILogger) {
+  constructor(@inject(dependenciesType.ILogger) private readonly logger: ILogger) {
     const result: DotenvConfigOutput = config();
     if (result.error) {
-      this.logger.error("[CONFIG SERVICE] cannot read '.env' file or it is not existed", result.error);
+      this.logger.error("[ConfigService] cannot read '.env' file or it is not existed", result.error);
     }
     this.config = result.parsed as DotenvParseOutput;
   }

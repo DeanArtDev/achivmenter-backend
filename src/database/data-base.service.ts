@@ -7,15 +7,15 @@ import "reflect-metadata";
 
 @injectable()
 export default class DataBaseService implements IDataBaseService {
-  private readonly db!: PrismaClient;
+  public client!: PrismaClient;
 
   constructor(@inject(dependenciesType.ILogger) private readonly logger: ILogger) {
-    this.db = new PrismaClient();
+    this.client = new PrismaClient();
   }
 
   async connect(): Promise<void> {
     try {
-      await this.db.$connect();
+      await this.client.$connect();
       this.logger.log(`[DataBaseService] Connection to the Data base is success`);
     } catch (e) {
       if (e instanceof Error) {
@@ -25,7 +25,7 @@ export default class DataBaseService implements IDataBaseService {
   }
 
   async disconnect(): Promise<void> {
-    await this.db.$disconnect();
+    await this.client.$disconnect();
     this.logger.log(`[DataBaseService] Data base was disconnected`);
   }
 }

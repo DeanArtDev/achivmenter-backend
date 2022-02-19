@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model FinancialPeriodModel {
+  id                Int                  @id @default(autoincrement())
+  month             Int                  @db.SmallInt()
+  year              Int
+  partCount         Int                  @db.SmallInt()
+  financialReportId Int                  @unique
+  FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id])
+}
+
+model FinancialPartModel {
+  id                Int                  @id @default(autoincrement())
+  income            Int
+  common            Int                  @db.SmallInt()
+  piggyBank         Int                  @db.SmallInt()
+  free              Int                  @db.SmallInt()
+  financialReportId Int                  @unique
+  FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id])
+
+  @@map("FiancialPartModel")
+}
+
+model FinancialReportModel {
+  id        Int                   @id @default(autoincrement())
+  period    FinancialPeriodModel?
+  parts     FinancialPartModel[]
+  createdAt DateTime              @default(now()) @db.Timestamp(6)
+}

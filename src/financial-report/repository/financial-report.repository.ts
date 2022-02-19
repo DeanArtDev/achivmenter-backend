@@ -14,7 +14,6 @@ export default class FinancialReportRepository implements IFinancialReportReposi
   ) {}
 
   public async create(report: FinancialReport): Promise<FinancialPeriodModelComplete> {
-    console.log(report);
     return await this.db.client.financialReportModel.create({
       data: { parts: { create: report.parts }, period: { create: report.period } },
       include: { parts: true, period: true },

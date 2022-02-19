@@ -1,7 +1,7 @@
 import { FinancialReportDTO } from "../dto/financial-report.dto";
-import { FinancialReportModel } from ".prisma/client";
+import { FinancialPeriodModelComplete } from "../types";
 
 export default interface IFinancialReportService {
-  createReport(report: FinancialReportDTO): Promise<FinancialReportModel>;
-  getAll(): Promise<FinancialReportModel[]>;
+  createReport(report: FinancialReportDTO): Promise<FinancialPeriodModelComplete>;
+  getAll(): Promise<FinancialPeriodModelComplete[]>;
 }

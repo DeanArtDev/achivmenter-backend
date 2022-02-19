@@ -4,7 +4,7 @@ import { FinancialReportDTO } from "../dto/financial-report.dto";
 import FinancialReport from "../entity/financial-report.entity";
 import { dependenciesType } from "../../dependencies.types";
 import { IFinancialReportRepository } from "../repository";
-import { FinancialReportModel } from ".prisma/client";
+import { FinancialPeriodModelComplete } from "../types";
 import "reflect-metadata";
 
 @injectable()
@@ -13,12 +13,12 @@ export default class FinancialReportService implements IFinancialReportService {
     @inject(dependenciesType.IFinancialReportRepository) private financialReportRepository: IFinancialReportRepository,
   ) {}
 
-  public async createReport(report: FinancialReportDTO): Promise<FinancialReportModel> {
+  public async createReport(report: FinancialReportDTO): Promise<FinancialPeriodModelComplete> {
     const newReport = new FinancialReport(report.period, report.parts);
     return await this.financialReportRepository.create(newReport);
   }
 
-  public async getAll(): Promise<FinancialReportModel[]> {
+  public async getAll(): Promise<FinancialPeriodModelComplete[]> {
       return await this.financialReportRepository.getAll();
   }
 }

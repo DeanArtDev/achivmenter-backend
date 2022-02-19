@@ -7,6 +7,7 @@ import { IConfigService, envVariable } from "../config";
 import { ILogger } from "../logger";
 import { IDataBaseService } from "../database";
 import "reflect-metadata";
+
 @injectable()
 export class App implements IApp {
   private app: FastifyInstance;

@@ -4,8 +4,10 @@ import ILogger from "./logger/logger.interface";
 import { LoggerService } from "./logger/logger.service";
 import { dependenciesType } from "./dependencies.types";
 import { ConfigService, IConfigService } from "./config";
-import { IFinancialReportController, FinancialReportController } from "./financial-report";
 import { DataBaseService, IDataBaseService } from "./database";
+import { IFinancialReportController, FinancialReportController } from "./financial-report";
+import { FinancialReportService, IFinancialReportService } from "./financial-report/service";
+import { FinancialReportRepository, IFinancialReportRepository } from "./financial-report/repository";
 
 const modules = new ContainerModule((bind: interfaces.Bind) => {
   bind<IApp>(dependenciesType.IApp).to(App).inSingletonScope();
@@ -14,6 +16,10 @@ const modules = new ContainerModule((bind: interfaces.Bind) => {
 
   bind<IConfigService>(dependenciesType.IConfigService).to(ConfigService).inSingletonScope();
   bind<IDataBaseService>(dependenciesType.IDataBaseService).to(DataBaseService).inSingletonScope();
+
+  // #financial-report
+  bind<IFinancialReportService>(dependenciesType.IFinancialReportService).to(FinancialReportService).inSingletonScope();
+  bind<IFinancialReportRepository>(dependenciesType.IFinancialReportRepository).to(FinancialReportRepository).inSingletonScope();
   bind<IFinancialReportController>(dependenciesType.IFinancialReportController)
     .to(FinancialReportController)
     .inSingletonScope();

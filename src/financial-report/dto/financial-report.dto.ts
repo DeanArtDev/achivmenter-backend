@@ -16,7 +16,7 @@ export type FinancialPartDTO = {
   free: number;
 };
 
-export type FinancialResponseDTO = FinancialReportDTO & {
+export type FinancialReportResponseDTO = FinancialReportDTO & {
   id: UniqID;
-  parts: FinancialPartDTO & { id: UniqID };
+  parts: (FinancialPartDTO & { id: UniqID })[];
 };

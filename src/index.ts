@@ -5,9 +5,9 @@ import { LoggerService } from "./logger/logger.service";
 import { dependenciesType } from "./dependencies.types";
 import { ConfigService, IConfigService } from "./config";
 import { DataBaseService, IDataBaseService } from "./database";
-import { IFinancialReportController, FinancialReportController } from "./financial-report";
-import { FinancialReportService, IFinancialReportService } from "./financial-report/service";
+import { IFinancialReportController, FinancialReportController } from "./financial-report/controller";
 import { FinancialReportRepository, IFinancialReportRepository } from "./financial-report/repository";
+import { FinancialReportService, IFinancialReportService } from "./financial-report/service";
 
 const modules = new ContainerModule((bind: interfaces.Bind) => {
   bind<IApp>(dependenciesType.IApp).to(App).inSingletonScope();

@@ -47,10 +47,10 @@ export default class FinancialReportController implements IFinancialReportContro
       parts: request.body.parts,
       period: request.body.period,
     });
-    replay.send(this.reportAdapter(report));
+    replay.code(201).send(this.reportAdapter(report));
   }
 
-  private reportAdapter({ id, period, parts }: FinancialPeriodModelComplete): FinancialReportResponseDTO {
+  private reportAdapter({ id, period, parts }: FinancialPeriodModelComplete): any {
     return {
       id: String(id),
       period: {

@@ -17,7 +17,7 @@ export class App implements IApp {
     routes.push(...this.financialReportController.routes);
 
     for (const route of routes) {
-      this.logger.log(`[APP] ${route.url}:[${route.method}] is successful added`);
+      this.loggerService.log(`[APP] ${route.url}:[${route.method}] is successful added`);
       this.app.route(route);
     }
   }
@@ -25,7 +25,7 @@ export class App implements IApp {
   constructor(
     @inject(dependenciesType.IConfigService) private config: IConfigService,
     @inject(dependenciesType.IDataBaseService) private readonly db: IDataBaseService,
-    @inject(dependenciesType.ILogger) private readonly logger: ILogger,
+    @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
     @inject(dependenciesType.IFinancialReportController) private financialReportController: IFinancialReportController,
   ) {
     this.app = Fastify();
@@ -36,13 +36,13 @@ export class App implements IApp {
       this.bindRouters();
       await this.db.connect();
       const address = await this.app.listen(this.config.get(envVariable.APP_PORT));
-      this.logger.log(
+      this.loggerService.log(
         `[APP] Server start listening to ${address} ${
           this.config.isDevelopmentMode ? `http:/localhost:${this.config.get(envVariable.APP_PORT)}` : ""
         }`,
       );
     } catch (e) {
-      this.logger.error(`[APP] something went wrong`, e);
+      this.loggerService.error(`[APP] something went wrong`, e);
     }
   }
 

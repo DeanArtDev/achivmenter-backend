@@ -1,7 +1,7 @@
 import { Container, ContainerModule, interfaces } from "inversify";
 import { App, IApp } from "./app";
 import ILogger from "./logger/logger.interface";
-import { LoggerService } from "./logger/logger.service";
+import { LoggerService } from "./logger";
 import { dependenciesType } from "./dependencies.types";
 import { ConfigService, IConfigService } from "./config";
 import { DataBaseService, IDataBaseService } from "./database";

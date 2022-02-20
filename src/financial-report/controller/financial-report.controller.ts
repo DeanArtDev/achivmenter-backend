@@ -28,6 +28,12 @@ export default class FinancialReportController extends BaseController implements
       method: "POST",
       handler: this.onCreateHandler.bind(this),
     },
+    {
+      url: this.url + "/:id",
+      // schema: validationSchemaOfDelete,
+      method: "DELETE",
+      handler: this.onDeleteHandler.bind(this),
+    },
   ];
 
   constructor(
@@ -40,7 +46,7 @@ export default class FinancialReportController extends BaseController implements
 
   private async onGetAllHandler(_: FastifyRequest, replay: FastifyReply): Promise<void> {
     const reports = await this.financialReportService.getAll();
-    this.ok<FinancialPeriodModelComplete[]>(replay, reports.map(this.reportAdapter))
+    this.ok<FinancialPeriodModelComplete[]>(replay, reports.map(this.reportAdapter));
   }
 
   private async onCreateHandler(
@@ -52,6 +58,14 @@ export default class FinancialReportController extends BaseController implements
       period: request.body.period,
     });
     this.create(replay).send(this.reportAdapter(report));
+  }
+
+  private async onDeleteHandler(
+    { params }: FastifyRequest<{ Params: { id: string } }>,
+    replay: FastifyReply,
+  ): Promise<void> {
+    const isDeleted = await this.financialReportService.deleteReport(params.id);
+    this.ok<boolean>(replay, isDeleted);
   }
 
   private reportAdapter({ id, period, parts }: FinancialPeriodModelComplete): any {

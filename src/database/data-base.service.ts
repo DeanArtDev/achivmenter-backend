@@ -9,23 +9,23 @@ import "reflect-metadata";
 export default class DataBaseService implements IDataBaseService {
   public client!: PrismaClient;
 
-  constructor(@inject(dependenciesType.ILogger) private readonly logger: ILogger) {
+  constructor(@inject(dependenciesType.ILogger) private readonly loggerService: ILogger) {
     this.client = new PrismaClient();
   }
 
   async connect(): Promise<void> {
     try {
       await this.client.$connect();
-      this.logger.log(`[DataBaseService] Connection to the Data base is success`);
+      this.loggerService.log(`[DataBaseService] Connection to the Data base is success`);
     } catch (e) {
       if (e instanceof Error) {
-        this.logger.error(`[DataBaseService] Connection to the Data base is failed`, e.message);
+        this.loggerService.error(`[DataBaseService] Connection to the Data base is failed`, e.message);
       }
     }
   }
 
   async disconnect(): Promise<void> {
     await this.client.$disconnect();
-    this.logger.log(`[DataBaseService] Data base was disconnected`);
+    this.loggerService.log(`[DataBaseService] Data base was disconnected`);
   }
 }

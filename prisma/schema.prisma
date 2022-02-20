@@ -13,7 +13,7 @@ model FinancialPeriodModel {
   year              Int
   partCount         Int                  @db.SmallInt()
   financialReportId Int                  @unique
-  FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id])
+  FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
 }
 
 model FinancialPartModel {
@@ -23,7 +23,7 @@ model FinancialPartModel {
   piggyBank         Int                  @db.SmallInt()
   free              Int                  @db.SmallInt()
   financialReportId Int                  
-  FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id])
+  FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
 }
 
 model FinancialReportModel {

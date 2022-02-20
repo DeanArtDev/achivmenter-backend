@@ -13,12 +13,16 @@ export default class FinancialReportService implements IFinancialReportService {
     @inject(dependenciesType.IFinancialReportRepository) private financialReportRepository: IFinancialReportRepository,
   ) {}
 
+  public async getAll(): Promise<FinancialPeriodModelComplete[]> {
+    return await this.financialReportRepository.getAll();
+  }
+
   public async createReport(report: FinancialReportDTO): Promise<FinancialPeriodModelComplete> {
     const newReport = new FinancialReport(report.period, report.parts);
     return await this.financialReportRepository.create(newReport);
   }
 
-  public async getAll(): Promise<FinancialPeriodModelComplete[]> {
-      return await this.financialReportRepository.getAll();
+  public async deleteReport(id: string): Promise<boolean> {
+    return this.financialReportRepository.delete(id);
   }
 }

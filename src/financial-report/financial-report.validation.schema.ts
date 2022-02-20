@@ -11,54 +11,46 @@ const FinancialPeriodSchema = {
   partCount: { type: "number" },
 };
 
-function getFinancialReportSchema(
-  partRequired?: FinancialPartSchemaTypes[],
-  periodRequired?: FinancialPeriodSchemaTypes[],
-) {
-  return {
-    parts: {
-      type: "array",
-      required: partRequired ?? ["income", "common", "piggyBank", "free"],
-      item: FinancialPartSchema,
-    },
-    period: {
-      type: "object",
-      required: periodRequired ?? ["month", "year", "partCount"],
-      properties: FinancialPeriodSchema,
-    },
-  };
-}
-
-type FinancialPartSchemaTypes = "id" | "income" | "common" | "piggyBank" | "free";
-type FinancialPeriodSchemaTypes = "month" | "partCount";
-
 export const FinancialPeriodResponseSchema = {
   type: "object",
   required: ["id", "period", "parts"],
   properties: {
     id: { type: "string" },
-    ...getFinancialReportSchema(["id", "income", "common", "piggyBank", "free"]),
     parts: {
-      ...getFinancialReportSchema(["id", "income", "common", "piggyBank", "free"]).parts,
-      item: {
-        id: { type: "string" },
-        ...FinancialPartSchema,
-      },
+      type: "array",
+      required: ["id", "income", "common", "piggyBank", "free"],
+      items: FinancialPartSchema,
+    },
+    period: {
+      type: "object",
+      required: ["month", "year", "partCount"],
+      properties: FinancialPeriodSchema,
     },
   },
 };
 
-export const FinancialPeriodRequestSchema = {
+export const FinancialPeriodCreateSchema = {
   type: "object",
   required: ["period", "parts"],
-  properties: getFinancialReportSchema(),
+  properties: {
+    parts: {
+      type: "array",
+      required: ["income", "common", "piggyBank", "free"],
+      items: FinancialPartSchema,
+    },
+    period: {
+      type: "object",
+      required: ["month", "year", "partCount"],
+      properties: FinancialPeriodSchema,
+    },
+  },
 };
 
 export const validationSchemaOfCreate = {
   tags: ["Financial report"],
   description: "Create a financial report",
-  body: FinancialPeriodRequestSchema,
-  response: { 200: FinancialPeriodResponseSchema },
+  body: FinancialPeriodCreateSchema,
+  response: { 201: FinancialPeriodResponseSchema },
 };
 
 export const validationSchemaOfGetAll = {
@@ -67,7 +59,7 @@ export const validationSchemaOfGetAll = {
   response: {
     200: {
       type: "array",
-      item: FinancialPeriodResponseSchema,
+      items: FinancialPeriodResponseSchema,
     },
   },
 };

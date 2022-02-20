@@ -1,20 +1,21 @@
 import { inject, injectable } from "inversify";
 import IFinancialReportController from "./financial-report.controller.interface";
-import { dependenciesType } from "../../dependencies.types";
 import { ILogger } from "../../logger";
 import { AppRoute } from "../../types/route.types";
 import { IFinancialReportService } from "../service";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { FinancialReportResponseDTO } from "../dto/financial-report.dto";
-import { validationSchemaOfCreate, validationSchemaOfGetAll } from "../financial-report.validation.schema";
 import { FinancialPeriodModelComplete } from "../types";
+import { dependenciesType } from "../../dependencies.types";
+import { validationSchemaOfCreate, validationSchemaOfGetAll } from "../financial-report.validation.schema";
+import { BaseController } from "../../common/base.controller";
 import "reflect-metadata";
 
 @injectable()
-export default class FinancialReportController implements IFinancialReportController {
-  //todo: add the validation schema
+export default class FinancialReportController extends BaseController implements IFinancialReportController {
   private readonly url = "/financial-report";
-  public readonly routes: AppRoute[] = [
+
+  public routes: AppRoute[] = [
     {
       url: this.url,
       method: "GET",
@@ -30,13 +31,16 @@ export default class FinancialReportController implements IFinancialReportContro
   ];
 
   constructor(
-    @inject(dependenciesType.ILogger) private readonly logger: ILogger,
-    @inject(dependenciesType.IFinancialReportService) private readonly financialReportService: IFinancialReportService,
-  ) {}
+    @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
+    @inject(dependenciesType.IFinancialReportService)
+    private readonly financialReportService: IFinancialReportService,
+  ) {
+    super(loggerService);
+  }
 
   private async onGetAllHandler(_: FastifyRequest, replay: FastifyReply): Promise<void> {
     const reports = await this.financialReportService.getAll();
-    replay.code(200).send(reports.map(this.reportAdapter));
+    this.ok<FinancialPeriodModelComplete[]>(replay, reports.map(this.reportAdapter))
   }
 
   private async onCreateHandler(
@@ -47,7 +51,7 @@ export default class FinancialReportController implements IFinancialReportContro
       parts: request.body.parts,
       period: request.body.period,
     });
-    replay.code(201).send(this.reportAdapter(report));
+    this.create(replay).send(this.reportAdapter(report));
   }
 
   private reportAdapter({ id, period, parts }: FinancialPeriodModelComplete): any {

@@ -11,7 +11,7 @@ const FinancialPeriodSchema = {
   partCount: { type: "number" },
 };
 
-export const FinancialPeriodResponseSchema = {
+const FinancialPeriodResponseSchema = {
   type: "object",
   required: ["id", "period", "parts"],
   properties: {
@@ -29,14 +29,18 @@ export const FinancialPeriodResponseSchema = {
   },
 };
 
-export const FinancialPeriodCreateSchema = {
+const FinancialPeriodCreateSchema = {
   type: "object",
   required: ["period", "parts"],
   properties: {
     parts: {
       type: "array",
-      required: ["income", "common", "piggyBank", "free"],
-      items: FinancialPartSchema,
+      minItems: 1,
+      items: {
+        type: "object",
+        required: ["income", "common", "piggyBank", "free"],
+        properties: FinancialPartSchema,
+      },
     },
     period: {
       type: "object",

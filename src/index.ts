@@ -6,7 +6,12 @@ import { dependenciesType } from "./dependencies.types";
 import { ConfigService, IConfigService } from "./config";
 import { DataBaseService, IDataBaseService } from "./database";
 import { IFinancialReportController, FinancialReportController } from "./financial-report/controller";
-import { FinancialReportRepository, IFinancialReportRepository } from "./financial-report/repository";
+import {
+  FinancialReportRepository,
+  IFinancialReportRepository,
+  FinancialPartRepository,
+  IFinancialPartRepository,
+} from "./financial-report/repository";
 import { FinancialReportService, IFinancialReportService } from "./financial-report/service";
 
 const modules = new ContainerModule((bind: interfaces.Bind) => {
@@ -19,7 +24,12 @@ const modules = new ContainerModule((bind: interfaces.Bind) => {
 
   // #financial-report
   bind<IFinancialReportService>(dependenciesType.IFinancialReportService).to(FinancialReportService).inSingletonScope();
-  bind<IFinancialReportRepository>(dependenciesType.IFinancialReportRepository).to(FinancialReportRepository).inSingletonScope();
+  bind<IFinancialReportRepository>(dependenciesType.IFinancialReportRepository)
+    .to(FinancialReportRepository)
+    .inSingletonScope();
+  bind<IFinancialPartRepository>(dependenciesType.IFinancialPartRepository)
+    .to(FinancialPartRepository)
+    .inSingletonScope();
   bind<IFinancialReportController>(dependenciesType.IFinancialReportController)
     .to(FinancialReportController)
     .inSingletonScope();

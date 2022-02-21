@@ -1,8 +1,10 @@
 import FinancialReport from "../entity/financial-report.entity";
-import { FinancialPeriodModelComplete } from "../types";
+import { FinancialReportModelComplete, InputFinancialReportModel } from "../types";
 
 export default interface IFinancialReportRepository {
-  getAll(): Promise<FinancialPeriodModelComplete[]>;
-  create(report: FinancialReport): Promise<FinancialPeriodModelComplete>;
+  getAll(): Promise<FinancialReportModelComplete[]>;
+  //todo: обновить
+  create(report: FinancialReport): Promise<FinancialReportModelComplete>;
+  update(report: InputFinancialReportModel): Promise<any>;
   delete(id: string): Promise<boolean>;
 }

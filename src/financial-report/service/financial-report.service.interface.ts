@@ -4,6 +4,6 @@ import { FinancialReportModelComplete } from "../types";
 export default interface IFinancialReportService {
   getAll(): Promise<FinancialReportModelComplete[]>;
   create(report: FinancialReportDTO): Promise<FinancialReportModelComplete>;
-  update(report: FinancialReportResponseDTO): Promise<any>;
+  update(report: FinancialReportResponseDTO): Promise<FinancialReportModelComplete>;
   delete(id: string): Promise<boolean>;
 }

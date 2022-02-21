@@ -1,17 +1,13 @@
 import { inject, injectable } from "inversify";
+import { difference } from "lodash";
+import { FinancialPartModel } from "@prisma/client";
 import IFinancialReportService from "./financial-report.service.interface";
-import {
-  FinancialPartCreateDTO,
-  FinancialReportCreateDTO,
-  FinancialReportDTO,
-  FinancialReportResponseDTO,
-} from "../dto/financial-report.dto";
-import FinancialReport from "../entity/financial-report.entity";
-import { dependenciesType } from "../../dependencies.types";
+import { FinancialPartCreateDTO, FinancialReportCreateDTO, FinancialReportDTO } from "../dto/financial-report.dto";
 import { IFinancialPartRepository, IFinancialReportRepository } from "../repository";
-import { FinancialReportModelComplete, InputFinancialPartModel } from "../types";
+import { FinancialReportModelComplete } from "../types";
+import { dependenciesType } from "../../dependencies.types";
+import FinancialReport from "../entity/financial-report.entity";
 import "reflect-metadata";
-import FinancialPart from "../entity/financial-part.entity";
 
 @injectable()
 export default class FinancialReportService implements IFinancialReportService {
@@ -25,38 +21,44 @@ export default class FinancialReportService implements IFinancialReportService {
   }
 
   public async create(report: FinancialReportDTO): Promise<FinancialReportModelComplete> {
-    const newReport = new FinancialReport(report.period, report.parts);
+    const newReport = new FinancialReport(report.month, report.year, report.partCount, report.parts);
     return await this.financialReportRepository.create(newReport);
   }
 
-  public async update(report: FinancialReportCreateDTO): Promise<any> {
-    const requests = report.parts.reduce<Promise<any>[]>((acc, part) => {
-      if (part.id) {
-        this.financialPartRepository.update(this.partAdapter(part));
-      }
-      acc.push(
-        this.financialPartRepository.create(
-          new FinancialPart(part.income, part.common, part.piggyBank, part.free),
-          Number(report.id),
-        ),
-      );
-      return acc;
-    }, []);
-    const response = await Promise.all(requests);
-    return await this.financialReportRepository.update(report);
+  public async update({
+    id: reportId,
+    parts,
+    ...others
+  }: FinancialReportCreateDTO): Promise<FinancialReportModelComplete> {
+    const updatedReport = await this.financialReportRepository.update({ id: Number(reportId), ...others });
+
+    const differentPartIds = difference(
+      updatedReport.parts.map((i) => i.id),
+      parts.map((i) => Number(i.id)),
+    );
+    await this.deleteUnusedParts(differentPartIds);
+    const newParts = await this.createOrUpdateParts(parts, Number(reportId));
+
+    return { ...updatedReport, parts: newParts };
   }
 
   public async delete(id: string): Promise<boolean> {
-    return this.financialReportRepository.delete(id);
+    return this.financialReportRepository.delete(Number(id));
   }
 
-  private partAdapter(part: FinancialPartCreateDTO): InputFinancialPartModel {
-    return {
-      id: Number(part.id),
-      income: part.income,
-      common: part.common,
-      piggyBank: part.piggyBank,
-      free: part.free,
-    };
+  private async deleteUnusedParts(ids: number[]): Promise<void> {
+    const requests = ids.reduce<Promise<boolean>[]>((acc, id) => {
+      acc.push(this.financialPartRepository.delete(Number(id)));
+      return acc;
+    }, []);
+    await Promise.all(requests);
+  }
+
+  private async createOrUpdateParts(parts: FinancialPartCreateDTO[], reportId: number) {
+    const requests = parts.map<Promise<FinancialPartModel>>(({ id: partId, ...others }) => {
+      return this.financialPartRepository.updateOrCreate({ id: Number(partId), ...others }, reportId);
+    });
+
+    return await Promise.all(requests);
   }
 }

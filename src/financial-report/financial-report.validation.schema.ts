@@ -5,9 +5,10 @@ const FinancialPartSchema = {
   free: { type: "number" },
 };
 
+//todo: узнать можно ли ругаться если поданы лишние даннве в DTO
 const FinancialPeriodResponseSchema = {
   type: "object",
-  required: ["id", "period", "month", "year", "partCount"],
+  required: ["id", "month", "year", "partCount"],
   properties: {
     id: { type: "string" },
     month: { type: "number" },

@@ -36,6 +36,8 @@ const financialModules = new ContainerModule((bind: interfaces.Bind) => {
     .inSingletonScope();
 });
 
+/* todo:
+*   1. [-] большая проблемма, при ошибке в репозитории (создание, update) ни чего не отвечаем пользователю*/
 const bootstrap = () => {
   const container = new Container();
   container.load(commonModules);

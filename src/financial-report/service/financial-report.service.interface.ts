@@ -1,8 +1,9 @@
-import { FinancialReportDTO } from "../dto/financial-report.dto";
-import { FinancialPeriodModelComplete } from "../types";
+import { FinancialReportDTO, FinancialReportResponseDTO } from "../dto/financial-report.dto";
+import { FinancialReportModelComplete } from "../types";
 
 export default interface IFinancialReportService {
-  getAll(): Promise<FinancialPeriodModelComplete[]>;
-  createReport(report: FinancialReportDTO): Promise<FinancialPeriodModelComplete>;
-  deleteReport(id: string): Promise<boolean>;
+  getAll(): Promise<FinancialReportModelComplete[]>;
+  create(report: FinancialReportDTO): Promise<FinancialReportModelComplete>;
+  update(report: FinancialReportResponseDTO): Promise<any>;
+  delete(id: string): Promise<boolean>;
 }

@@ -2,7 +2,7 @@ import { FinancialPartModel } from "@prisma/client";
 import { inject, injectable } from "inversify";
 import FinancialPart from "../entity/financial-part.entity";
 import IFinancialPartRepository from "./financial-part.repository.interface";
-import { InputFinancialPartModel, InputFinancialPartModelCreate } from "../types";
+import { InputFinancialPartModel, InputFinancialPartModelUpdate } from "../types";
 import { ILogger } from "../../logger";
 import { IDataBaseService } from "../../database";
 import { dependenciesType } from "../../dependencies.types";
@@ -23,12 +23,11 @@ export default class FinancialPartRepository implements IFinancialPartRepository
   }
 
   public async updateOrCreate(
-    part: InputFinancialPartModelCreate,
+    { id, ...others }: InputFinancialPartModelUpdate,
     financialReportId: FinancialPartModel["financialReportId"],
   ): Promise<FinancialPartModel> {
-    const { id, ...others } = part;
     return await this.db.client.financialPartModel.upsert({
-      where: { id: id || 0 },
+      where: { id: id ?? 0 },
       update: others,
       create: { ...others, financialReportId },
     });

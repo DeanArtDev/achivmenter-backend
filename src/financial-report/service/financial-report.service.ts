@@ -56,7 +56,8 @@ export default class FinancialReportService implements IFinancialReportService {
 
   private async createOrUpdateParts(parts: FinancialPartCreateDTO[], reportId: number) {
     const requests = parts.map<Promise<FinancialPartModel>>(({ id: partId, ...others }) => {
-      return this.financialPartRepository.updateOrCreate({ id: Number(partId), ...others }, reportId);
+      const id = isNaN(Number(partId)) ? undefined : Number(partId);
+      return this.financialPartRepository.updateOrCreate({ id, ...others }, reportId);
     });
 
     return await Promise.all(requests);

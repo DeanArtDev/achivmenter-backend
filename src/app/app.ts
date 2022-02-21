@@ -38,7 +38,7 @@ export class App implements IApp {
       const address = await this.app.listen(this.config.get(envVariable.APP_PORT));
       this.loggerService.log(
         `[APP] Server start listening to ${address} ${
-          this.config.isDevelopmentMode ? `http:/localhost:${this.config.get(envVariable.APP_PORT)}` : ""
+          this.config.isDevelopmentMode ? `http://localhost:${this.config.get(envVariable.APP_PORT)}` : ""
         }`,
       );
     } catch (e) {

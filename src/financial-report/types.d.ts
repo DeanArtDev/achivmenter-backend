@@ -6,7 +6,7 @@ export type FinancialReportModelComplete = FinancialReportModel & {
   parts: FinancialPartModel[];
 };
 
-export type InputFinancialPartModelCreate = Omit<InputFinancialPartModel, "id"> & { id?: number };
+export type InputFinancialPartModelUpdate = Omit<InputFinancialPartModel, "id"> & { id?: number };
 export type InputFinancialReportModel = Omit<FinancialReportModelComplete, "parts" | "createdAt"> & {
-  parts: InputFinancialPartModelCreate[];
+  parts: InputFinancialPartModelUpdate[];
 };

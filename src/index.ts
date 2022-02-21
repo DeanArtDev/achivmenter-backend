@@ -14,30 +14,32 @@ import {
 } from "./financial-report/repository";
 import { FinancialReportService, IFinancialReportService } from "./financial-report/service";
 
-const modules = new ContainerModule((bind: interfaces.Bind) => {
+const commonModules = new ContainerModule((bind: interfaces.Bind) => {
   bind<IApp>(dependenciesType.IApp).to(App).inSingletonScope();
-
   bind<ILogger>(dependenciesType.ILogger).to(LoggerService).inSingletonScope();
-
   bind<IConfigService>(dependenciesType.IConfigService).to(ConfigService).inSingletonScope();
   bind<IDataBaseService>(dependenciesType.IDataBaseService).to(DataBaseService).inSingletonScope();
+});
 
-  // #financial-report
+const financialModules = new ContainerModule((bind: interfaces.Bind) => {
+  bind<IFinancialReportController>(dependenciesType.IFinancialReportController)
+    .to(FinancialReportController)
+    .inSingletonScope();
+
   bind<IFinancialReportService>(dependenciesType.IFinancialReportService).to(FinancialReportService).inSingletonScope();
+
   bind<IFinancialReportRepository>(dependenciesType.IFinancialReportRepository)
     .to(FinancialReportRepository)
     .inSingletonScope();
   bind<IFinancialPartRepository>(dependenciesType.IFinancialPartRepository)
     .to(FinancialPartRepository)
     .inSingletonScope();
-  bind<IFinancialReportController>(dependenciesType.IFinancialReportController)
-    .to(FinancialReportController)
-    .inSingletonScope();
 });
 
 const bootstrap = () => {
   const container = new Container();
-  container.load(modules);
+  container.load(commonModules);
+  container.load(financialModules);
   const app = container.get<IApp>(dependenciesType.IApp);
   app.init();
 };

@@ -1,9 +1,8 @@
-import { FinancialPartModel, FinancialPeriodModel, FinancialReportModel } from "@prisma/client";
+import { FinancialPartModel, FinancialReportModel } from "@prisma/client";
 
 export type InputFinancialPartModel = Omit<FinancialPartModel, "financialReportId">;
 
 export type FinancialReportModelComplete = FinancialReportModel & {
-  period: FinancialPeriodModel | null;
   parts: FinancialPartModel[];
 };
 

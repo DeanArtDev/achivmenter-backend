@@ -15,6 +15,7 @@ import "reflect-metadata";
 export default class FinancialReportController extends BaseController implements IFinancialReportController {
   private readonly url = "/financial-report";
 
+  //todo: add validation schemas
   public routes: AppRoute[] = [
     {
       url: this.url,
@@ -52,28 +53,25 @@ export default class FinancialReportController extends BaseController implements
 
   private async onGetAllHandler(_: FastifyRequest, replay: FastifyReply): Promise<void> {
     const reports = await this.financialReportService.getAll();
-    this.ok<FinancialReportModelComplete[]>(replay, reports.map(this.reportAdapter));
+    this.ok<FinancialReportResponseDTO[]>(replay, reports.map(this.reportResponseAdapter));
   }
 
   private async onCreateHandler(
-    request: FastifyRequest<{ Body: FinancialReportResponseDTO }>,
+    { body }: FastifyRequest<{ Body: FinancialReportResponseDTO }>,
     replay: FastifyReply,
   ): Promise<void> {
-    const report = await this.financialReportService.create({
-      parts: request.body.parts,
-      period: request.body.period,
-    });
-    this.create(replay).send(this.reportAdapter(report));
+    const { month, year, partCount, parts } = body;
+    const report = await this.financialReportService.create({ month, year, partCount, parts });
+    this.create(replay).send(this.reportResponseAdapter(report));
   }
 
-  // todo: обязательно id при update
   private async onUpdateHandler(
-    request: FastifyRequest<{ Body: FinancialReportResponseDTO }>,
+    { body }: FastifyRequest<{ Body: FinancialReportResponseDTO }>,
     replay: FastifyReply,
   ): Promise<void> {
-    const { id, parts, period } = request.body;
-    const updatedReport = await this.financialReportService.update({ id, parts, period });
-    this.ok<FinancialReportModelComplete>(replay, updatedReport);
+    const { id, month, year, partCount, parts } = body;
+    const updatedReport = await this.financialReportService.update({ id, month, year, partCount, parts });
+    this.ok<FinancialReportResponseDTO>(replay, this.reportResponseAdapter(updatedReport));
   }
 
   private async onDeleteHandler(
@@ -84,22 +82,24 @@ export default class FinancialReportController extends BaseController implements
     this.ok<boolean>(replay, isDeleted);
   }
 
-  private reportAdapter({ id, period: newPeriod, parts }: FinancialReportModelComplete): any {
+  private reportResponseAdapter({
+    id,
+    parts,
+    month,
+    year,
+    partCount,
+  }: FinancialReportModelComplete): FinancialReportResponseDTO {
     return {
       id: String(id),
-      period: newPeriod
-        ? {
-            month: newPeriod.month,
-            year: newPeriod.year,
-            partCount: newPeriod.partCount,
-          }
-        : undefined,
-      parts: parts.map((p) => ({
-        id: String(p.id),
-        income: p.income,
-        common: p.common,
-        piggyBank: p.piggyBank,
-        free: p.free,
+      month,
+      year,
+      partCount,
+      parts: parts.map(({ id, income, common, piggyBank, free }) => ({
+        id: String(id),
+        income,
+        common,
+        piggyBank,
+        free,
       })),
     };
   }

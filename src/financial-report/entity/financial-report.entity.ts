@@ -1,12 +1,14 @@
-import FinancialPeriod from "./financial-period.entity";
 import FinancialPart from "./financial-part.entity";
 
 export default class FinancialReport {
-  public readonly period!: FinancialPeriod;
   public readonly parts!: FinancialPart[];
 
-  constructor(period: FinancialPeriod, parts: FinancialPart[]) {
-    this.period = new FinancialPeriod(period.month, period.partCount, period.year);
+  constructor(
+    public readonly month: number,
+    public readonly year: number,
+    public readonly partCount: number,
+    parts: FinancialPart[],
+  ) {
     this.parts = parts.map((p) => new FinancialPart(p.income, p.common, p.piggyBank, p.free));
   }
 }

@@ -7,28 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model FinancialPeriodModel {
-  id                Int                  @id @default(autoincrement())
-  month             Int                  @db.SmallInt()
-  year              Int
-  partCount         Int                  @db.SmallInt()
-  financialReportId Int                  @unique
-  FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
-}
-
 model FinancialPartModel {
   id                Int                  @id @default(autoincrement())
   income            Int
   common            Int                  @db.SmallInt()
   piggyBank         Int                  @db.SmallInt()
   free              Int                  @db.SmallInt()
-  financialReportId Int                  
+  financialReportId Int
   FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
 }
 
 model FinancialReportModel {
-  id        Int                   @id @default(autoincrement())
-  period    FinancialPeriodModel?
+  id        Int                  @id @default(autoincrement())
+  month     Int                  @db.SmallInt()
+  year      Int                  @db.SmallInt()
+  partCount Int                  @db.SmallInt()
   parts     FinancialPartModel[]
-  createdAt DateTime              @default(now()) @db.Timestamp(6)
+  createdAt DateTime             @default(now()) @db.Timestamp(6)
 }

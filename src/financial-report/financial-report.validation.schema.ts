@@ -5,33 +5,29 @@ const FinancialPartSchema = {
   free: { type: "number" },
 };
 
-const FinancialPeriodSchema = {
-  month: { type: "number" },
-  year: { type: "number" },
-  partCount: { type: "number" },
-};
-
+//todo: узнать можно ли ругаться если поданы лишние даннве в DTO
 const FinancialPeriodResponseSchema = {
   type: "object",
-  required: ["id", "period", "parts"],
+  required: ["id", "month", "year", "partCount"],
   properties: {
     id: { type: "string" },
+    month: { type: "number" },
+    year: { type: "number" },
+    partCount: { type: "number" },
     parts: {
       type: "array",
       required: ["id", "income", "common", "piggyBank", "free"],
       items: FinancialPartSchema,
-    },
-    period: {
-      type: "object",
-      required: ["month", "year", "partCount"],
-      properties: FinancialPeriodSchema,
     },
   },
 };
 
 const FinancialPeriodCreateSchema = {
   type: "object",
-  required: ["period", "parts"],
+  required: ["parts", "month", "year", "partCount"],
+  month: { type: "number" },
+  year: { type: "number" },
+  partCount: { type: "number" },
   properties: {
     parts: {
       type: "array",
@@ -41,11 +37,6 @@ const FinancialPeriodCreateSchema = {
         required: ["income", "common", "piggyBank", "free"],
         properties: FinancialPartSchema,
       },
-    },
-    period: {
-      type: "object",
-      required: ["month", "year", "partCount"],
-      properties: FinancialPeriodSchema,
     },
   },
 };

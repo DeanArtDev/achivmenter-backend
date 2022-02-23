@@ -2,7 +2,7 @@ import { FinancialPartModel } from "@prisma/client";
 import { inject, injectable } from "inversify";
 import FinancialPart from "../entity/financial-part.entity";
 import IFinancialPartRepository from "./financial-part.repository.interface";
-import { InputFinancialPartModel } from "../types";
+import { InputFinancialPartModel, InputFinancialPartModelUpdate } from "../types";
 import { ILogger } from "../../logger";
 import { IDataBaseService } from "../../database";
 import { dependenciesType } from "../../dependencies.types";
@@ -15,22 +15,33 @@ export default class FinancialPartRepository implements IFinancialPartRepository
     @inject(dependenciesType.IDataBaseService) private readonly db: IDataBaseService,
   ) {}
 
-  // public async getOne(id: FinancialPartModel["id"]): Promise<FinancialPartModel | null> {}
 
   public async create(part: FinancialPart, financialReportId: number): Promise<FinancialPartModel> {
     return await this.db.client.financialPartModel.create({
-      data: { income: part.income, common: part.common, piggyBank: part.piggyBank, free: part.free, financialReportId },
+      data: { financialReportId, ...part },
     });
   }
 
-  public async update(part: InputFinancialPartModel): Promise<FinancialPartModel> {
+  public async updateOrCreate(
+    { id, ...others }: InputFinancialPartModelUpdate,
+    financialReportId: FinancialPartModel["financialReportId"],
+  ): Promise<FinancialPartModel> {
+    return await this.db.client.financialPartModel.upsert({
+      where: { id: id ?? 0 },
+      update: others,
+      create: { ...others, financialReportId },
+    });
+  }
+
+  public async update({ id, ...others }: InputFinancialPartModel): Promise<FinancialPartModel> {
     return await this.db.client.financialPartModel.update({
-      where: { id: part.id },
-      data: { income: part.income, common: part.common, piggyBank: part.piggyBank, free: part.free },
+      where: { id },
+      data: others,
     });
   }
 
   public async delete(id: FinancialPartModel["id"]): Promise<boolean> {
-    return !!(await this.db.client.financialPartModel.delete({ where: { id: id } }));
+    const deletedPart = await this.db.client.financialPartModel.delete({ where: { id: id } });
+    return !!deletedPart;
   }
 }

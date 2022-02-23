@@ -5,6 +5,6 @@ export default interface IFinancialReportRepository {
   getAll(): Promise<FinancialReportModelComplete[]>;
   //todo: обновить
   create(report: FinancialReport): Promise<FinancialReportModelComplete>;
-  update(report: InputFinancialReportModel): Promise<any>;
-  delete(id: string): Promise<boolean>;
+  update(report: Omit<InputFinancialReportModel, "parts">): Promise<FinancialReportModelComplete>;
+  delete(id: FinancialReportModelComplete["id"]): Promise<boolean>;
 }

@@ -1,11 +1,13 @@
 import Fastify, { FastifyInstance } from "fastify";
 import { inject, injectable } from "inversify";
 import { IApp } from "./app.interface";
-import { dependenciesType } from "../dependencies.types";
 import { IFinancialReportController } from "../financial-report/controller";
 import { IConfigService, envVariable } from "../config";
+import { AppRoute } from "../types/route.types";
 import { ILogger } from "../logger";
 import { IDataBaseService } from "../database";
+import { IAppPlugin, CorsPlugin } from "./plugins";
+import { dependenciesType } from "../dependencies.types";
 import "reflect-metadata";
 
 @injectable()
@@ -13,12 +15,23 @@ export class App implements IApp {
   private app: FastifyInstance;
 
   private bindRouters(): void {
-    const routes = [];
+    const routes: AppRoute[] = [];
     routes.push(...this.financialReportController.routes);
 
     for (const route of routes) {
-      this.loggerService.log(`[APP] ${route.url}:[${route.method}] is successful added`);
+      this.loggerService.log(`[APP - ROUTE] ${route.method}:${route.url} is successful added`);
       this.app.route(route);
+    }
+  }
+
+  private registerPlugins(): void {
+    const plugins: IAppPlugin[] = [];
+    plugins.push(this.corsPlugin);
+
+    for (const plugin of plugins) {
+      const { pluginEntity, options } = plugin.install();
+      this.app.register(pluginEntity, options)
+      this.loggerService.log(`[APP - PLUGIN] ${plugin.displayName} is successful registered`);
     }
   }
 
@@ -27,18 +40,20 @@ export class App implements IApp {
     @inject(dependenciesType.IDataBaseService) private readonly db: IDataBaseService,
     @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
     @inject(dependenciesType.IFinancialReportController) private financialReportController: IFinancialReportController,
+    @inject(dependenciesType.CorsPlugin) private corsPlugin: CorsPlugin,
   ) {
     this.app = Fastify();
   }
 
   public async init(): Promise<void> {
     try {
+      this.registerPlugins();
       this.bindRouters();
       await this.db.connect();
       const address = await this.app.listen(this.config.get(envVariable.APP_PORT));
       this.loggerService.log(
         `[APP] Server start listening to ${address} ${
-          this.config.isDevelopmentMode ? `http:/localhost:${this.config.get(envVariable.APP_PORT)}` : ""
+          this.config.isDevelopmentMode ? `http://localhost:${this.config.get(envVariable.APP_PORT)}` : ""
         }`,
       );
     } catch (e) {

@@ -13,12 +13,17 @@ import {
   IFinancialPartRepository,
 } from "./financial-report/repository";
 import { FinancialReportService, IFinancialReportService } from "./financial-report/service";
+import { CorsPlugin, IAppPlugin } from "./app/plugins";
 
 const commonModules = new ContainerModule((bind: interfaces.Bind) => {
   bind<IApp>(dependenciesType.IApp).to(App).inSingletonScope();
   bind<ILogger>(dependenciesType.ILogger).to(LoggerService).inSingletonScope();
   bind<IConfigService>(dependenciesType.IConfigService).to(ConfigService).inSingletonScope();
   bind<IDataBaseService>(dependenciesType.IDataBaseService).to(DataBaseService).inSingletonScope();
+});
+
+const pluginsModules = new ContainerModule((bind: interfaces.Bind) => {
+  bind<IAppPlugin>(dependenciesType.CorsPlugin).to(CorsPlugin).inSingletonScope();
 });
 
 const financialModules = new ContainerModule((bind: interfaces.Bind) => {
@@ -37,10 +42,13 @@ const financialModules = new ContainerModule((bind: interfaces.Bind) => {
 });
 
 /* todo:
-*   1. [-] большая проблемма, при ошибке в репозитории (создание, update) ни чего не отвечаем пользователю*/
+ *   1. [-] большая проблемма, при ошибке в репозитории (создание, update) ни чего не отвечаем пользователю
+ *   2. [-] большая проблемма, нет внятной обработки exeptions
+ * */
 const bootstrap = () => {
   const container = new Container();
   container.load(commonModules);
+  container.load(pluginsModules);
   container.load(financialModules);
   const app = container.get<IApp>(dependenciesType.IApp);
   app.init();

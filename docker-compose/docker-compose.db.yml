@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  data-base:
+    image: "postgres:13"
+    ports:
+      - published: 5455
+        target: 5432
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - "bd_vol:/var/lib/postgresql/data"
+    networks:
+      - data-base-network

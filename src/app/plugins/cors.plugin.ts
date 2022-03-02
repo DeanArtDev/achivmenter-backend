@@ -37,7 +37,8 @@ export default class CorsPlugin implements IAppPlugin {
       let corsOptions: FastifyCorsOptions;
       let error: Error | null = null;
 
-      corsOptions = { origin: this.checkOrigin(request.headers) };
+      // corsOptions = { origin: this.checkOrigin(request.headers) };
+      corsOptions = { origin: true };
 
       callback(error, corsOptions);
     };

@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  data-base:
+    extends:
+      file: "./docker-compose/docker-compose.db.yml"
+      service: data-base
+
+volumes:
+  bd_vol:
+
+networks:
+  data-base-network:
+    driver: "bridge"

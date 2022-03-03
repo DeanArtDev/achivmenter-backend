@@ -3,16 +3,15 @@ import { Logger } from "tslog";
 import { injectable } from "inversify";
 import "reflect-metadata";
 
-
 @injectable()
 export class LoggerService implements ILogger {
   public logger: Logger;
 
   constructor() {
     this.logger = new Logger({
-      displayInstanceName: false,
       displayLoggerName: false,
       displayFunctionName: false,
+      displayFilePath: "hidden",
     });
   }
 

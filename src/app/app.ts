@@ -30,7 +30,7 @@ export class App implements IApp {
 
     for (const plugin of plugins) {
       const { pluginEntity, options } = plugin.install();
-      this.app.register(pluginEntity, options)
+      this.app.register(pluginEntity, options);
       this.loggerService.log(`[APP - PLUGIN] ${plugin.displayName} is successful registered`);
     }
   }

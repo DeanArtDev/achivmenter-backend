@@ -10,6 +10,8 @@ import { IAppPlugin, CorsPlugin } from "./plugins";
 import { dependenciesType } from "../dependencies.types";
 import "reflect-metadata";
 
+const API_PREFIX = "/api"
+
 @injectable()
 export class App implements IApp {
   private app: FastifyInstance;
@@ -27,7 +29,7 @@ export class App implements IApp {
           done();
         }
       },
-      { prefix: "/api" },
+      { prefix: API_PREFIX },
     );
   }
 
@@ -62,8 +64,8 @@ export class App implements IApp {
         this.config.get(envVariable.API_ADDRESS),
       );
       this.loggerService.log(
-        `[APP] Server start listening to ${address} ${
-          this.config.isDevelopmentMode ? `http://localhost:${this.config.get(envVariable.API_PORT)}` : ""
+        `[APP] Server start listening to ${address}${API_PREFIX} ${
+          this.config.isDevelopmentMode ? `http://localhost:${this.config.get(envVariable.API_PORT)}${API_PREFIX}` : ""
         }`,
       );
     } catch (e) {

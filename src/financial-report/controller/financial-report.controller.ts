@@ -80,7 +80,7 @@ export default class FinancialReportController extends BaseController implements
       // todo: [error] если не HTTPError то оборачиваем в HTTPError, в остальных случаях пропускаем дальше
       if (e instanceof PrismaClientKnownRequestError) {
         this.exceptionFilter.catch(
-          new HTTPError(500, (e.meta as any)?.cause ?? "", `[FinancialReportController]`),
+          new HTTPError(500, JSON.stringify(e.meta, null, 2), `[FinancialReportController]`),
           request,
           replay,
         );

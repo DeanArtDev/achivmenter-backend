@@ -27,7 +27,7 @@ export class App implements IApp {
           done();
         }
       },
-      { prefix: "/app" },
+      { prefix: "/api" },
     );
   }
 

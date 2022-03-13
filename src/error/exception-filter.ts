@@ -12,7 +12,7 @@ export default class ExceptionFilter implements IExceptionFilter {
 
   catch(err: Error | HTTPError, request: FastifyRequest, replay: FastifyReply): void {
     if (err instanceof HTTPError) {
-      this.loggerService.error(`[${err.context}] Ошибка ${err.statusCode}: ${err.message}`);
+      this.loggerService.error(`${err.context} Error code: ${err.statusCode}: ${err.message}`);
       replay.status(err.statusCode).send({ err: err.message });
     } else {
       this.loggerService.error(`${err.message}`);

@@ -1,3 +1,4 @@
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { inject, injectable } from "inversify";
 import IFinancialReportController from "./financial-report.controller.interface";
 import { ILogger } from "../../logger";
@@ -9,13 +10,14 @@ import { FinancialReportModelComplete } from "../types";
 import { dependenciesType } from "../../dependencies.types";
 import { validationSchemaOfCreate, validationSchemaOfGetAll } from "../financial-report.validation.schema";
 import { BaseController } from "../../common/base.controller";
+import { HTTPError, IExceptionFilter } from "../../error";
 import "reflect-metadata";
 
 @injectable()
 export default class FinancialReportController extends BaseController implements IFinancialReportController {
   private readonly url = "/financial-report";
 
-  //todo: add validation schemas
+  //todo: [hp] add validation schemas
   public routes: AppRoute[] = [
     {
       url: this.url,
@@ -47,6 +49,7 @@ export default class FinancialReportController extends BaseController implements
     @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
     @inject(dependenciesType.IFinancialReportService)
     private readonly financialReportService: IFinancialReportService,
+    @inject(dependenciesType.IExceptionFilter) private readonly exceptionFilter: IExceptionFilter,
   ) {
     super(loggerService);
   }
@@ -66,12 +69,23 @@ export default class FinancialReportController extends BaseController implements
   }
 
   private async onUpdateHandler(
-    { body }: FastifyRequest<{ Body: FinancialReportResponseDTO }>,
+    request: FastifyRequest<{ Body: FinancialReportResponseDTO }>,
     replay: FastifyReply,
   ): Promise<void> {
-    const { id, month, year, partCount, parts } = body;
-    const updatedReport = await this.financialReportService.update({ id, month, year, partCount, parts });
-    this.ok<FinancialReportResponseDTO>(replay, this.reportResponseAdapter(updatedReport));
+    try {
+      const { id, month, year, partCount, parts } = request.body;
+      const updatedReport = await this.financialReportService.update({ id, month, year, partCount, parts });
+      this.ok<FinancialReportResponseDTO>(replay, this.reportResponseAdapter(updatedReport));
+    } catch (e) {
+      // todo: [error] если не HTTPError то оборачиваем в HTTPError, в остальных случаях пропускаем дальше
+      if (e instanceof PrismaClientKnownRequestError) {
+        this.exceptionFilter.catch(
+          new HTTPError(500, (e.meta as any)?.cause ?? "", `[FinancialReportController]`),
+          request,
+          replay,
+        );
+      }
+    }
   }
 
   private async onDeleteHandler(

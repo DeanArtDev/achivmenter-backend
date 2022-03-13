@@ -2,5 +2,6 @@
 .vscode
 .idea
 # turn in on when in will be deploed to a server
-# .env 
+# .env.prod
 node_modules
+.DS_Store

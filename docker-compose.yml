@@ -3,8 +3,13 @@ version: "3"
 services:
   data-base:
     extends:
-      file: "./docker-compose/docker-compose.db.yml"
+      file: "./docker-compose/docker-compose.data-base.yml"
       service: data-base
+
+  api:
+    extends:
+      file: "./docker-compose/docker-compose.api.yml"
+      service: api
 
 volumes:
   bd_vol:

@@ -4,8 +4,10 @@ services:
   data-base:
     image: "postgres:13"
     ports:
-      - published: 5455
-        target: 5432
+      - published: ${DB_PORT}
+        target: ${DB_PORT}
+    container_name: ${DB_HOST}
+    restart: always
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -14,3 +16,5 @@ services:
       - "bd_vol:/var/lib/postgresql/data"
     networks:
       - data-base-network
+    env_file:
+      - ../.env

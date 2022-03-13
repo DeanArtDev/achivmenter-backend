@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  api:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+
+    ports:
+      - published: 80
+        target: ${API_PORT}
+    container_name: api-container
+    restart: always
+
+    networks:
+      - data-base-network
+    env_file:
+      - ../.env
+
+    links:
+      - data-base
+    depends_on:
+      - data-base

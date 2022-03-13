@@ -5,6 +5,7 @@ export const dependenciesType = {
   ILogger: Symbol.for("ILogger"),
   IConfigService: Symbol.for("IConfigService"),
   IDataBaseService: Symbol.for("IDataBaseService"),
+  IExceptionFilter: Symbol.for("IExceptionFilter"),
 
   CorsPlugin: Symbol.for("CorsPlugin"),
 

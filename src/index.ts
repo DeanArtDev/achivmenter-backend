@@ -1,7 +1,6 @@
 import { Container, ContainerModule, interfaces } from "inversify";
 import { App, IApp } from "./app";
-import ILogger from "./logger/logger.interface";
-import { LoggerService } from "./logger";
+import { LoggerService, ILogger } from "./logger";
 import { dependenciesType } from "./dependencies.types";
 import { ConfigService, IConfigService } from "./config";
 import { DataBaseService, IDataBaseService } from "./database";
@@ -14,10 +13,12 @@ import {
 } from "./financial-report/repository";
 import { FinancialReportService, IFinancialReportService } from "./financial-report/service";
 import { CorsPlugin, IAppPlugin } from "./app/plugins";
+import { ExceptionFilter, IExceptionFilter } from "./error";
 
 const commonModules = new ContainerModule((bind: interfaces.Bind) => {
   bind<IApp>(dependenciesType.IApp).to(App).inSingletonScope();
   bind<ILogger>(dependenciesType.ILogger).to(LoggerService).inSingletonScope();
+  bind<IExceptionFilter>(dependenciesType.IExceptionFilter).to(ExceptionFilter).inSingletonScope();
   bind<IConfigService>(dependenciesType.IConfigService).to(ConfigService).inSingletonScope();
   bind<IDataBaseService>(dependenciesType.IDataBaseService).to(DataBaseService).inSingletonScope();
 });
@@ -43,7 +44,7 @@ const financialModules = new ContainerModule((bind: interfaces.Bind) => {
 
 /* todo:
  *   1. [-] большая проблемма, при ошибке в репозитории (создание, update) ни чего не отвечаем пользователю
- *   2. [-] большая проблемма, нет внятной обработки exeptions
+ *   2. [-] большая проблемма, нет внятной обработки exceptions
  * */
 const bootstrap = () => {
   const container = new Container();

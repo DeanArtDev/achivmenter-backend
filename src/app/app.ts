@@ -10,18 +10,27 @@ import { IAppPlugin, CorsPlugin } from "./plugins";
 import { dependenciesType } from "../dependencies.types";
 import "reflect-metadata";
 
+const API_PREFIX = "/api"
+
 @injectable()
 export class App implements IApp {
   private app: FastifyInstance;
 
-  private bindRouters(): void {
+  private async bindRouters(): Promise<void> {
+    //todo: [improvement] add public / private routes
     const routes: AppRoute[] = [];
     routes.push(...this.financialReportController.routes);
 
-    for (const route of routes) {
-      this.loggerService.log(`[APP - ROUTE] ${route.method}:${route.url} is successful added`);
-      this.app.route(route);
-    }
+    await this.app.register(
+      (instance, _, done) => {
+        for (const route of routes) {
+          instance.route(route);
+          this.loggerService.log(`[APP - ROUTE] ${route.method}:${route.url} is successful added`);
+          done();
+        }
+      },
+      { prefix: API_PREFIX },
+    );
   }
 
   private registerPlugins(): void {
@@ -30,7 +39,7 @@ export class App implements IApp {
 
     for (const plugin of plugins) {
       const { pluginEntity, options } = plugin.install();
-      this.app.register(pluginEntity, options)
+      this.app.register(pluginEntity, options);
       this.loggerService.log(`[APP - PLUGIN] ${plugin.displayName} is successful registered`);
     }
   }
@@ -48,12 +57,15 @@ export class App implements IApp {
   public async init(): Promise<void> {
     try {
       this.registerPlugins();
-      this.bindRouters();
+      await this.bindRouters();
       await this.db.connect();
-      const address = await this.app.listen(this.config.get(envVariable.APP_PORT));
+      const address = await this.app.listen(
+        this.config.get(envVariable.API_PORT),
+        this.config.get(envVariable.API_ADDRESS),
+      );
       this.loggerService.log(
-        `[APP] Server start listening to ${address} ${
-          this.config.isDevelopmentMode ? `http://localhost:${this.config.get(envVariable.APP_PORT)}` : ""
+        `[APP] Server start listening to ${address}${API_PREFIX} ${
+          this.config.isDevelopmentMode ? `http://localhost:${this.config.get(envVariable.API_PORT)}${API_PREFIX}` : ""
         }`,
       );
     } catch (e) {

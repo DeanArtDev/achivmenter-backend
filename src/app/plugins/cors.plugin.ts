@@ -12,7 +12,7 @@ import "reflect-metadata";
 @injectable()
 export default class CorsPlugin implements IAppPlugin {
   private get availableOrigins(): string[] {
-    return [this.devClientURL];
+    return [this.clientURL];
   }
 
   constructor(
@@ -37,14 +37,13 @@ export default class CorsPlugin implements IAppPlugin {
       let corsOptions: FastifyCorsOptions;
       let error: Error | null = null;
 
-      // corsOptions = { origin: this.checkOrigin(request.headers) };
-      corsOptions = { origin: true };
+      corsOptions = { origin: this.checkOrigin(request.headers) };
 
       callback(error, corsOptions);
     };
   }
 
-  private get devClientURL(): string {
+  private get clientURL(): string {
     return `${this.config.get(envVariable.CLIENT_URL)}:${this.config.get(envVariable.CLIENT_PORT)}`;
   }
 

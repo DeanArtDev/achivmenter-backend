@@ -2,19 +2,63 @@ import Fastify, { FastifyInstance } from "fastify";
 import { inject, injectable } from "inversify";
 import { IApp } from "./app.interface";
 import { IFinancialReportController } from "../financial-report/controller";
-import { IConfigService, envVariable } from "../config";
+import { envVariable, IConfigService } from "../config";
 import { AppRoute } from "../types/route.types";
 import { ILogger } from "../logger";
 import { IDataBaseService } from "../database";
-import { IAppPlugin, CorsPlugin } from "./plugins";
+import { CorsPlugin, IAppPlugin } from "./plugins";
 import { dependenciesType } from "../dependencies.types";
 import "reflect-metadata";
 
-const API_PREFIX = "/api"
-
 @injectable()
 export class App implements IApp {
+  constructor(
+    @inject(dependenciesType.IConfigService) private config: IConfigService,
+    @inject(dependenciesType.IDataBaseService) private readonly db: IDataBaseService,
+    @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
+    @inject(dependenciesType.IFinancialReportController) private financialReportController: IFinancialReportController,
+    @inject(dependenciesType.CorsPlugin) private corsPlugin: CorsPlugin,
+  ) {
+    this.app = Fastify();
+  }
+
+  public async init(): Promise<void> {
+    try {
+      this.registerPlugins();
+      await this.db.connect();
+      await this.bindRouters();
+      const address = await this.app.listen(this.apiPort, this.apiAddress);
+      this.loggerService.log(
+        `[APP] Server start listening to ${address}${this.apiInitialPath} ${
+          this.config.isDevelopmentMode ? `http://localhost:${this.apiPort}${this.apiPrefix}` : ""
+        }`,
+      );
+    } catch (e) {
+      this.loggerService.error(`[APP] something went wrong`, e);
+    }
+  }
+
+  public async close(): Promise<void> {
+    await this.app.close();
+  }
+
   private app: FastifyInstance;
+
+  private get apiPrefix(): string {
+    return this.config.get(envVariable.API_INITIAL_PATH);
+  }
+
+  private get apiPort(): number {
+    return Number(this.config.get(envVariable.API_PORT));
+  }
+
+  private get apiInitialPath(): string {
+    return this.config.get(envVariable.API_INITIAL_PATH);
+  }
+
+  private get apiAddress(): string {
+    return this.config.get(envVariable.API_ADDRESS);
+  }
 
   private async bindRouters(): Promise<void> {
     //todo: [improvement] add public / private routes
@@ -29,7 +73,7 @@ export class App implements IApp {
           done();
         }
       },
-      { prefix: API_PREFIX },
+      { prefix: this.apiPrefix },
     );
   }
 
@@ -42,38 +86,5 @@ export class App implements IApp {
       this.app.register(pluginEntity, options);
       this.loggerService.log(`[APP - PLUGIN] ${plugin.displayName} is successful registered`);
     }
-  }
-
-  constructor(
-    @inject(dependenciesType.IConfigService) private config: IConfigService,
-    @inject(dependenciesType.IDataBaseService) private readonly db: IDataBaseService,
-    @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
-    @inject(dependenciesType.IFinancialReportController) private financialReportController: IFinancialReportController,
-    @inject(dependenciesType.CorsPlugin) private corsPlugin: CorsPlugin,
-  ) {
-    this.app = Fastify();
-  }
-
-  public async init(): Promise<void> {
-    try {
-      this.registerPlugins();
-      await this.bindRouters();
-      await this.db.connect();
-      const address = await this.app.listen(
-        this.config.get(envVariable.API_PORT),
-        this.config.get(envVariable.API_ADDRESS),
-      );
-      this.loggerService.log(
-        `[APP] Server start listening to ${address}${API_PREFIX} ${
-          this.config.isDevelopmentMode ? `http://localhost:${this.config.get(envVariable.API_PORT)}${API_PREFIX}` : ""
-        }`,
-      );
-    } catch (e) {
-      this.loggerService.error(`[APP] something went wrong`, e);
-    }
-  }
-
-  public async close(): Promise<void> {
-    await this.app.close();
   }
 }

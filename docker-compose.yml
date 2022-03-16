@@ -3,8 +3,20 @@ version: "3"
 services:
   data-base:
     extends:
-      file: "./docker-compose/docker-compose.db.yml"
+      file: "./docker-compose/docker-compose.data-base.yml"
       service: data-base
+
+  api:
+    extends:
+      file: "./docker-compose/docker-compose.api.yml"
+      service: api
+    links:
+      - data-base
+    depends_on:
+      - data-base
+#    добавить healthcheck и подключаться к базу только тогда когда она поднята
+    healthcheck:
+      test: data-base
 
 volumes:
   bd_vol:

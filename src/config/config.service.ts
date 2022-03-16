@@ -9,12 +9,12 @@ import "reflect-metadata";
 
 @injectable()
 export default class ConfigService implements IConfigService {
-  private config: DotenvParseOutput;
+  private readonly config: DotenvParseOutput;
 
   constructor(@inject(dependenciesType.ILogger) private readonly loggerService: ILogger) {
     const result: DotenvConfigOutput = config();
     if (result.error) {
-      this.loggerService.error("[ConfigService] cannot read '.env' file or it is not existed", result.error);
+      this.loggerService.error("[ConfigService] cannot read '.env.prod' file or it is not existed", result.error);
     }
     this.config = result.parsed as DotenvParseOutput;
   }

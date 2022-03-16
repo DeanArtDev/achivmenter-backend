@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
 
     ports:
-      - published: 80
+      - published: ${API_PORT}
         target: ${API_PORT}
     container_name: api-container
     restart: always

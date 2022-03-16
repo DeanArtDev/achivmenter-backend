@@ -14,12 +14,11 @@ services:
       - data-base
     depends_on:
       - data-base
-#    добавить healthcheck и подключаться к базу только тогда когда она поднята
     healthcheck:
       test: data-base
 
 volumes:
-  bd_vol:
+  achivmenter_bd_vol:
 
 networks:
   data-base-network:

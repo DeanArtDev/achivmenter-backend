@@ -7,7 +7,7 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon",
+    "dev": "npm run db:start && nodemon",
     "db:start": "sh runpg.sh",
     "db:stop": "sh stoppg.sh",
     "test": "echo \"Error: no test specified\" && exit 1"

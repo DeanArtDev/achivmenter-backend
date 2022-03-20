@@ -24,8 +24,8 @@ export class App implements IApp {
 
   public async init(): Promise<void> {
     try {
-      this.registerPlugins();
       await this.db.connect();
+      this.registerPlugins();
       await this.bindRouters();
       const address = await this.app.listen(this.apiPort, this.apiAddress);
       this.loggerService.log(

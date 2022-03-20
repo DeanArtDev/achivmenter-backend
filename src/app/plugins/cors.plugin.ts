@@ -11,10 +11,6 @@ import "reflect-metadata";
 
 @injectable()
 export default class CorsPlugin implements IAppPlugin {
-  private get availableOrigins(): string[] {
-    return [this.clientURL];
-  }
-
   constructor(
     @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
     @inject(dependenciesType.IConfigService) private config: IConfigService,
@@ -34,21 +30,25 @@ export default class CorsPlugin implements IAppPlugin {
       request: FastifyRequest,
       callback: (error: Error | null, corsOptions?: FastifyCorsOptions) => void,
     ): void => {
-      let corsOptions: FastifyCorsOptions;
+      let corsOptions: FastifyCorsOptions = {};
       let error: Error | null = null;
 
-      corsOptions = { origin: this.checkOrigin(request.headers) };
+      if (this.checkOrigin(request.headers)) {
+        corsOptions = { origin: true };
+      } else {
+        error = new Error("FORBIDDEN");
+      }
 
       callback(error, corsOptions);
     };
   }
 
-  private get clientURL(): string {
-    return `${this.config.get(envVariable.CLIENT_URL)}:${this.config.get(envVariable.CLIENT_PORT)}`;
+  private get availableOrigins(): string[] {
+    return this.config.get(envVariable.API_AVAILABLE_URLS).split(",");
   }
 
   private checkOrigin(headers: FastifyRequest["headers"]): boolean {
     if (!headers.origin) return false;
-    return this.availableOrigins.some((o) => o === headers.origin);
+    return this.availableOrigins.some((o) => headers.origin?.includes(o));
   }
 }

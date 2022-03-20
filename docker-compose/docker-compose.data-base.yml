@@ -13,7 +13,7 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - "bd_vol:/var/lib/postgresql/data"
+      - "achivmenter_bd_vol:/var/lib/postgresql/data"
     networks:
       - data-base-network
     env_file:

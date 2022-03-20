@@ -6,7 +6,7 @@ services:
     ports:
       - published: ${DB_PORT}
         target: ${DB_PORT}
-    container_name: ${DB_HOST}
+    container_name: data-base-container
     restart: always
     environment:
       POSTGRES_DB: ${DB_NAME}

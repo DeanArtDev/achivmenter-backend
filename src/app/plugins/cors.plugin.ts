@@ -49,6 +49,6 @@ export default class CorsPlugin implements IAppPlugin {
 
   private checkOrigin(headers: FastifyRequest["headers"]): boolean {
     if (!headers.origin) return false;
-    return this.availableOrigins.some((o) => headers.origin?.includes(o));
+    return this.availableOrigins.some((o) => headers.origin === o);
   }
 }

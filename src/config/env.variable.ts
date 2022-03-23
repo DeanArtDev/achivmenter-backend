@@ -3,7 +3,7 @@ const enum envVariable {
   API_ADDRESS = "API_ADDRESS",
   API_INITIAL_PATH = "API_INITIAL_PATH",
   NODE_ENV = "NODE_ENV",
-  API_AVAILABLE_URLS = "API_AVAILABLE_URLS",
+  API_AVAILABLE_CORS = "API_AVAILABLE_CORS",
 }
 
 export default envVariable;

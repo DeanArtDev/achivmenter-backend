@@ -44,7 +44,7 @@ export default class CorsPlugin implements IAppPlugin {
   }
 
   private get availableOrigins(): string[] {
-    return this.config.get(envVariable.API_AVAILABLE_URLS).split(",");
+    return this.config.get(envVariable.API_AVAILABLE_URLS).split(", ");
   }
 
   private checkOrigin(headers: FastifyRequest["headers"]): boolean {

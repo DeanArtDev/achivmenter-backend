@@ -5,6 +5,11 @@ services:
     extends:
       file: "./docker-compose/docker-compose.data-base.yml"
       service: data-base
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   api:
     extends:
@@ -13,9 +18,8 @@ services:
     links:
       - data-base
     depends_on:
-      - data-base
-    healthcheck:
-      test: data-base
+      data-base:
+        condition: "service_healthy"
 
 volumes:
   achivmenter_bd_vol:

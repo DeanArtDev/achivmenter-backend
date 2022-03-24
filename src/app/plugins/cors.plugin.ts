@@ -33,6 +33,14 @@ export default class CorsPlugin implements IAppPlugin {
       let corsOptions: FastifyCorsOptions = {};
       let error: Error | null = null;
 
+      console.log("headers", request.headers);
+      console.log("hostname", request.hostname);
+      console.log("ip", request.ip);
+      console.log("url", request.url);
+      console.log("method", request.method);
+      console.log("routerPath", request.routerPath);
+      console.log("routerMethod", request.routerMethod);
+
       corsOptions = { origin: this.availableOrigins };
 
       callback(error, corsOptions);

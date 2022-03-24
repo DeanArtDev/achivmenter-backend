@@ -33,13 +33,7 @@ export default class CorsPlugin implements IAppPlugin {
       let corsOptions: FastifyCorsOptions = {};
       let error: Error | null = null;
 
-      console.log(this.availableOrigins);
-      console.log(request.headers);
-      if (this.checkOrigin(request.headers)) {
-        corsOptions = { origin: true };
-      } else {
-        error = new Error("FORBIDDEN");
-      }
+      corsOptions = { origin: this.availableOrigins };
 
       callback(error, corsOptions);
     };
@@ -47,10 +41,5 @@ export default class CorsPlugin implements IAppPlugin {
 
   private get availableOrigins(): string[] {
     return this.config.get(envVariable.API_AVAILABLE_CORS).split(", ");
-  }
-
-  private checkOrigin(headers: FastifyRequest["headers"]): boolean {
-    if (!headers.origin) return false;
-    return this.availableOrigins.some((o) => headers.origin === o);
   }
 }

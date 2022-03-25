@@ -27,7 +27,7 @@ export default class AuthorizationPlugin implements IAppPlugin {
       verifyJWT(request.headers.authorization.split(" ")[1], this.secret, (err, payload) => {
         if (err || !payload) done();
 
-        request.context.config = { ...request.context.config, authUser: payload };
+        request.context.config = { ...request.context.config, authUser: payload as object };
         done();
       });
     }

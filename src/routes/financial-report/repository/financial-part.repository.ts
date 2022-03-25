@@ -3,9 +3,9 @@ import { inject, injectable } from "inversify";
 import FinancialPart from "../entity/financial-part.entity";
 import IFinancialPartRepository from "./financial-part.repository.interface";
 import { InputFinancialPartModel, InputFinancialPartModelUpdate } from "../types";
-import { ILogger } from "../../logger";
-import { IDataBaseService } from "../../database";
-import { dependenciesType } from "../../dependencies.types";
+import { ILogger } from "../../../logger";
+import { IDataBaseService } from "../../../database";
+import { dependenciesType } from "../../../dependencies.types";
 import "reflect-metadata";
 
 @injectable()

@@ -5,7 +5,7 @@ import IFinancialReportService from "./financial-report.service.interface";
 import { FinancialPartCreateDTO, FinancialReportCreateDTO, FinancialReportDTO } from "../dto/financial-report.dto";
 import { IFinancialPartRepository, IFinancialReportRepository } from "../repository";
 import { FinancialReportModelComplete } from "../types";
-import { dependenciesType } from "../../dependencies.types";
+import { dependenciesType } from "../../../dependencies.types";
 import FinancialReport from "../entity/financial-report.entity";
 import "reflect-metadata";
 

@@ -1,7 +1,7 @@
 import Fastify, { FastifyInstance } from "fastify";
 import { inject, injectable } from "inversify";
 import { IApp } from "./app.interface";
-import { IFinancialReportController } from "../financial-report/controller";
+import { IFinancialReportController } from "../routes/financial-report/controller";
 import { envVariable, IConfigService } from "../config";
 import { AppRoute } from "../types/route.types";
 import { ILogger } from "../logger";

@@ -1,9 +1,9 @@
 import { injectable, inject } from "inversify";
-import { ILogger } from "../../logger";
+import { ILogger } from "../../../logger";
 import IFinancialReportRepository from "./financial-report.repository.interface";
-import { IDataBaseService } from "../../database";
+import { IDataBaseService } from "../../../database";
 import { FinancialReportModelComplete, InputFinancialReportModel } from "../types";
-import { dependenciesType } from "../../dependencies.types";
+import { dependenciesType } from "../../../dependencies.types";
 import FinancialReport from "../entity/financial-report.entity";
 
 @injectable()

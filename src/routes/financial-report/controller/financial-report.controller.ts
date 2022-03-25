@@ -1,16 +1,16 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { inject, injectable } from "inversify";
 import IFinancialReportController from "./financial-report.controller.interface";
-import { ILogger } from "../../logger";
-import { AppRoute } from "../../types/route.types";
+import { ILogger } from "../../../logger";
+import { AppRoute } from "../../../types/route.types";
 import { IFinancialReportService } from "../service";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { FinancialReportResponseDTO } from "../dto/financial-report.dto";
 import { FinancialReportModelComplete } from "../types";
-import { dependenciesType } from "../../dependencies.types";
+import { dependenciesType } from "../../../dependencies.types";
 import { validationSchemaOfCreate, validationSchemaOfGetAll } from "../financial-report.validation.schema";
-import { BaseController } from "../../common/base.controller";
-import { HTTPError, IExceptionFilter } from "../../error";
+import { BaseController } from "../../../common/base.controller";
+import { HTTPError, IExceptionFilter } from "../../../error";
 import "reflect-metadata";
 
 @injectable()

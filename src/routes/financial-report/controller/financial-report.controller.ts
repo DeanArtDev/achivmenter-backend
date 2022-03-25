@@ -60,7 +60,6 @@ export default class FinancialReportController extends BaseController implements
   }
 
   private async onGetAllHandler(_: FastifyRequest, replay: FastifyReply): Promise<void> {
-    console.log("config", _.context.config);
     const reports = await this.financialReportService.getAll();
     this.ok<FinancialReportResponseDTO[]>(replay, reports.map(this.reportResponseAdapter));
   }

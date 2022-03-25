@@ -2,6 +2,7 @@ import fp from "fastify-plugin";
 import { verify as verifyJWT } from "jsonwebtoken";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { FastifyPluginCallback, FastifyPluginOptions } from "fastify/types/plugin";
+import { HookHandlerDoneFunction } from "fastify/types/hooks";
 import { FastifyInstance } from "fastify/types/instance";
 import IAppPlugin from "./plugin.interface";
 
@@ -14,12 +15,12 @@ export default class AuthorizationPlugin implements IAppPlugin {
     return { pluginEntity: fp(this.shapePluginEntity.bind(this)) };
   }
 
-  private shapePluginEntity(instance: FastifyInstance, _: FastifyPluginOptions, done: (err?: Error) => void): void {
-    instance.addHook<{}, { isAuth: boolean }>("onRequest", this.onRequestCheckAuthorization);
+  private shapePluginEntity(instance: FastifyInstance, _: FastifyPluginOptions, done: HookHandlerDoneFunction): void {
+    instance.addHook("onRequest", this.onRequestCheckAuthorization);
     done();
   }
 
-  private onRequestCheckAuthorization(request: FastifyRequest, _: FastifyReply, done: (err?: Error) => void) {
+  private onRequestCheckAuthorization(request: FastifyRequest, _: FastifyReply, done: HookHandlerDoneFunction) {
     request.context.config = { ...request.context.config, authUser: null };
 
     if (request.headers.authorization) {

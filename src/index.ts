@@ -12,7 +12,6 @@ import {
   IFinancialPartRepository,
 } from "./routes/financial-report/repository";
 import { FinancialReportService, IFinancialReportService } from "./routes/financial-report/service";
-import { CorsPlugin, IAppPlugin } from "./app/plugins";
 import { ExceptionFilter, IExceptionFilter } from "./error";
 
 const commonModules = new ContainerModule((bind: interfaces.Bind) => {
@@ -21,10 +20,6 @@ const commonModules = new ContainerModule((bind: interfaces.Bind) => {
   bind<IExceptionFilter>(dependenciesType.IExceptionFilter).to(ExceptionFilter).inSingletonScope();
   bind<IConfigService>(dependenciesType.IConfigService).to(ConfigService).inSingletonScope();
   bind<IDataBaseService>(dependenciesType.IDataBaseService).to(DataBaseService).inSingletonScope();
-});
-
-const pluginsModules = new ContainerModule((bind: interfaces.Bind) => {
-  bind<IAppPlugin>(dependenciesType.CorsPlugin).to(CorsPlugin).inSingletonScope();
 });
 
 const financialModules = new ContainerModule((bind: interfaces.Bind) => {
@@ -49,7 +44,6 @@ const financialModules = new ContainerModule((bind: interfaces.Bind) => {
 const bootstrap = () => {
   const container = new Container();
   container.load(commonModules);
-  container.load(pluginsModules);
   container.load(financialModules);
   const app = container.get<IApp>(dependenciesType.IApp);
   app.init();

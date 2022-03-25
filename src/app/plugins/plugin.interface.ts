@@ -2,7 +2,7 @@ import { FastifyPluginCallback, FastifyPluginOptions } from "fastify/types/plugi
 
 export type RegisterPluginType = {
   pluginEntity: FastifyPluginCallback;
-  options: FastifyPluginOptions;
+  options?: FastifyPluginOptions;
 };
 
 export default interface IAppPlugin {

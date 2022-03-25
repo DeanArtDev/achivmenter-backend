@@ -6,7 +6,7 @@ import { envVariable, IConfigService } from "../config";
 import { AppRoute } from "../types/route.types";
 import { ILogger } from "../logger";
 import { IDataBaseService } from "../database";
-import { CorsPlugin, IAppPlugin } from "./plugins";
+import { CorsPlugin, AuthorizationPlugin, IAppPlugin } from "./plugins";
 import { dependenciesType } from "../dependencies.types";
 import "reflect-metadata";
 
@@ -17,7 +17,6 @@ export class App implements IApp {
     @inject(dependenciesType.IDataBaseService) private readonly db: IDataBaseService,
     @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
     @inject(dependenciesType.IFinancialReportController) private financialReportController: IFinancialReportController,
-    @inject(dependenciesType.CorsPlugin) private corsPlugin: CorsPlugin,
   ) {
     this.app = Fastify();
   }
@@ -25,7 +24,7 @@ export class App implements IApp {
   public async init(): Promise<void> {
     try {
       await this.db.connect();
-      this.registerPlugins();
+      await this.registerPlugins();
       await this.bindRouters();
       const address = await this.app.listen(this.apiPort, this.apiAddress);
       this.loggerService.log(
@@ -60,8 +59,15 @@ export class App implements IApp {
     return this.config.get(envVariable.API_ADDRESS);
   }
 
+  private get jwtSecret(): string {
+    return this.config.get(envVariable.API_JWT_SECRET);
+  }
+
+  private get availableOrigins(): string[] {
+    return this.config.get(envVariable.API_AVAILABLE_CORS).split(", ");
+  }
+
   private async bindRouters(): Promise<void> {
-    //todo: [improvement] add public / private routes
     const routes: AppRoute[] = [];
     routes.push(...this.financialReportController.routes);
 
@@ -70,21 +76,20 @@ export class App implements IApp {
         for (const route of routes) {
           instance.route(route);
           this.loggerService.log(`[APP - ROUTE] ${route.method}:${route.url} is successful added`);
-          done();
         }
+        done();
       },
       { prefix: this.apiPrefix },
     );
   }
 
-  private registerPlugins(): void {
-    const plugins: IAppPlugin[] = [];
-    plugins.push(this.corsPlugin);
+  private async registerPlugins(): Promise<void> {
+    const plugins: IAppPlugin[] = [new CorsPlugin(this.availableOrigins), new AuthorizationPlugin(this.jwtSecret)];
 
     for (const plugin of plugins) {
       const { pluginEntity, options } = plugin.install();
-      this.app.register(pluginEntity, options);
       this.loggerService.log(`[APP - PLUGIN] ${plugin.displayName} is successful registered`);
+      await this.app.register(pluginEntity, options);
     }
   }
 }

@@ -8,9 +8,14 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { FinancialReportResponseDTO } from "../dto/financial-report.dto";
 import { FinancialReportModelComplete } from "../types";
 import { dependenciesType } from "../../../dependencies.types";
-import { validationSchemaOfCreate, validationSchemaOfGetAll } from "../financial-report.validation.schema";
+import {
+  validationSchemaCreate,
+  validationSchemaDelete,
+  validationSchemaGetAll,
+} from "../financial-report.validation.schema";
 import { BaseController } from "../../../common/base.controller";
 import { HTTPError, IExceptionFilter } from "../../../error";
+import { AuthGuardMiddleware } from "../../../middlewares";
 import "reflect-metadata";
 
 @injectable()
@@ -22,24 +27,25 @@ export default class FinancialReportController extends BaseController implements
     {
       url: this.url,
       method: "GET",
-      schema: validationSchemaOfGetAll,
+      schema: validationSchemaGetAll,
       handler: this.onGetAllHandler.bind(this),
+      onRequest: [new AuthGuardMiddleware().execute],
     },
     {
       url: this.url,
-      schema: validationSchemaOfCreate,
+      schema: validationSchemaCreate,
       method: "POST",
       handler: this.onCreateHandler.bind(this),
     },
     {
       url: this.url,
-      // schema: validationSchemaOfCreate,
+      schema: validationSchemaCreate,
       method: "PUT",
       handler: this.onUpdateHandler.bind(this),
     },
     {
       url: this.url + "/:id",
-      // schema: validationSchemaOfDelete,
+      schema: validationSchemaDelete,
       method: "DELETE",
       handler: this.onDeleteHandler.bind(this),
     },
@@ -47,14 +53,14 @@ export default class FinancialReportController extends BaseController implements
 
   constructor(
     @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
-    @inject(dependenciesType.IFinancialReportService)
-    private readonly financialReportService: IFinancialReportService,
+    @inject(dependenciesType.IFinancialReportService) private readonly financialReportService: IFinancialReportService,
     @inject(dependenciesType.IExceptionFilter) private readonly exceptionFilter: IExceptionFilter,
   ) {
     super(loggerService);
   }
 
   private async onGetAllHandler(_: FastifyRequest, replay: FastifyReply): Promise<void> {
+    console.log("config", _.context.config);
     const reports = await this.financialReportService.getAll();
     this.ok<FinancialReportResponseDTO[]>(replay, reports.map(this.reportResponseAdapter));
   }

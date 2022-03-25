@@ -4,6 +4,7 @@ const enum envVariable {
   API_INITIAL_PATH = "API_INITIAL_PATH",
   NODE_ENV = "NODE_ENV",
   API_AVAILABLE_CORS = "API_AVAILABLE_CORS",
+  API_JWT_SECRET = "API_JWT_SECRET",
 }
 
 export default envVariable;

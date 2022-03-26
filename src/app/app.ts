@@ -2,6 +2,7 @@ import Fastify, { FastifyInstance } from "fastify";
 import { inject, injectable } from "inversify";
 import { IApp } from "./app.interface";
 import { IFinancialReportController } from "../routes/financial-report/controller";
+import { IUserController } from "../routes/user/controller";
 import { envVariable, IConfigService } from "../config";
 import { AppRoute } from "../types/route.types";
 import { ILogger } from "../logger";
@@ -13,10 +14,11 @@ import "reflect-metadata";
 @injectable()
 export class App implements IApp {
   constructor(
-    @inject(dependenciesType.IConfigService) private config: IConfigService,
+    @inject(dependenciesType.IConfigService) private configService: IConfigService,
     @inject(dependenciesType.IDataBaseService) private readonly db: IDataBaseService,
     @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
     @inject(dependenciesType.IFinancialReportController) private financialReportController: IFinancialReportController,
+    @inject(dependenciesType.IUserController) private userController: IUserController,
   ) {
     this.app = Fastify();
   }
@@ -29,7 +31,7 @@ export class App implements IApp {
       const address = await this.app.listen(this.apiPort, this.apiAddress);
       this.loggerService.log(
         `[APP] Server start listening to ${address}${this.apiInitialPath} ${
-          this.config.isDevelopmentMode ? `http://localhost:${this.apiPort}${this.apiPrefix}` : ""
+          this.configService.isDevelopmentMode ? `http://localhost:${this.apiPort}${this.apiPrefix}` : ""
         }`,
       );
     } catch (e) {
@@ -44,32 +46,32 @@ export class App implements IApp {
   private app: FastifyInstance;
 
   private get apiPrefix(): string {
-    return this.config.get(envVariable.API_INITIAL_PATH);
+    return this.configService.get(envVariable.API_INITIAL_PATH);
   }
 
   private get apiPort(): number {
-    return Number(this.config.get(envVariable.API_PORT));
+    return Number(this.configService.get(envVariable.API_PORT));
   }
 
   private get apiInitialPath(): string {
-    return this.config.get(envVariable.API_INITIAL_PATH);
+    return this.configService.get(envVariable.API_INITIAL_PATH);
   }
 
   private get apiAddress(): string {
-    return this.config.get(envVariable.API_ADDRESS);
+    return this.configService.get(envVariable.API_ADDRESS);
   }
 
   private get jwtSecret(): string {
-    return this.config.get(envVariable.API_JWT_SECRET);
+    return this.configService.get(envVariable.API_JWT_SECRET);
   }
 
   private get availableOrigins(): string[] {
-    return this.config.get(envVariable.API_AVAILABLE_CORS).split(", ");
+    return this.configService.get(envVariable.API_AVAILABLE_CORS).split(", ");
   }
 
   private async bindRouters(): Promise<void> {
     const routes: AppRoute[] = [];
-    routes.push(...this.financialReportController.routes);
+    routes.push(...this.financialReportController.routes, ...this.userController.routes);
 
     await this.app.register(
       (instance, _, done) => {

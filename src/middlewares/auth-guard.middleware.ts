@@ -1,4 +1,4 @@
-import IMiddleware from "./middlevare.interface";
+import IMiddleware from "./interfaces/middlevare.interface";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { HookHandlerDoneFunction } from "fastify/types/hooks";
 

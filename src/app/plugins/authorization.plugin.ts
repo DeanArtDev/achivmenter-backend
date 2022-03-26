@@ -22,11 +22,10 @@ export default class AuthorizationPlugin implements IAppPlugin {
 
   private onRequestCheckAuthorization(request: FastifyRequest, _: FastifyReply, done: HookHandlerDoneFunction) {
     request.context.config = { ...request.context.config, authUser: null };
-
     if (request.headers.authorization) {
       verifyJWT(request.headers.authorization.split(" ")[1], this.secret, (err, payload) => {
         if (err || !payload) done();
-
+        console.log("token", payload);
         request.context.config = { ...request.context.config, authUser: payload as object };
         done();
       });

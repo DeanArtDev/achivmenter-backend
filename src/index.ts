@@ -8,12 +8,12 @@ import { IFinancialReportController, FinancialReportController } from "./routes/
 import { FinancialReportService, IFinancialReportService } from "./routes/financial-report/service";
 import { ExceptionFilter, IExceptionFilter } from "./error";
 import FinancialPartRepository from "./repositories/financial-part.repository";
-import IFinancialReportRepository from "./repositories/financial-report.repository.interface";
+import IFinancialReportRepository from "./repositories/interfaces/financial-report.repository.interface";
 import FinancialReportRepository from "./repositories/financial-report.repository";
-import IFinancialPartRepository from "./repositories/financial-part.repository.interface";
+import IFinancialPartRepository from "./repositories/interfaces/financial-part.repository.interface";
 import { IUserController, UserController } from "./routes/user/controller";
 import { JWTService, IJWTService } from "./services/jwt-service";
-import IUserRepository from "./repositories/user.repository.interface";
+import IUserRepository from "./repositories/interfaces/user.repository.interface";
 import UserRepository from "./repositories/user.repository";
 import IUserService from "./routes/user/service/user.service.interface";
 import UserService from "./routes/user/service/user.service";

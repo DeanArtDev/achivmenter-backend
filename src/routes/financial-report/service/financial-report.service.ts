@@ -1,14 +1,13 @@
 import { inject, injectable } from "inversify";
 import { difference } from "lodash";
 import { FinancialPartModel } from "@prisma/client";
-import IFinancialReportRepository from "../../../repositories/financial-report.repository.interface";
-import IFinancialPartRepository from "../../../repositories/financial-part.repository.interface";
+import IFinancialReportRepository from "../../../repositories/interfaces/financial-report.repository.interface";
+import IFinancialPartRepository from "../../../repositories/interfaces/financial-part.repository.interface";
 import IFinancialReportService from "./financial-report.service.interface";
 import { FinancialPartCreateDTO, FinancialReportCreateDTO, FinancialReportDTO } from "../financial-report.dto";
 import { FinancialReportModelComplete } from "../types";
 import { dependenciesType } from "../../../dependencies.types";
 import FinancialReport from "../../../entities/financial-report.entity";
-import "reflect-metadata";
 
 @injectable()
 export default class FinancialReportService implements IFinancialReportService {

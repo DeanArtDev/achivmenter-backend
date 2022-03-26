@@ -7,7 +7,7 @@ import { envVariable, IConfigService } from "../config";
 import { AppRoute } from "../types/route.types";
 import { ILogger } from "../logger";
 import { IDataBaseService } from "../database";
-import { CorsPlugin, AuthorizationPlugin, IAppPlugin } from "./plugins";
+import { CorsPlugin, IAppPlugin } from "./plugins";
 import { dependenciesType } from "../dependencies.types";
 import "reflect-metadata";
 
@@ -19,6 +19,7 @@ export class App implements IApp {
     @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
     @inject(dependenciesType.IFinancialReportController) private financialReportController: IFinancialReportController,
     @inject(dependenciesType.IUserController) private userController: IUserController,
+    @inject(dependenciesType.AuthorizationPlugin) private authorizationPlugin: IAppPlugin,
   ) {
     this.app = Fastify();
   }
@@ -61,10 +62,6 @@ export class App implements IApp {
     return this.configService.get(envVariable.API_ADDRESS);
   }
 
-  private get jwtSecret(): string {
-    return this.configService.get(envVariable.API_JWT_SECRET);
-  }
-
   private get availableOrigins(): string[] {
     return this.configService.get(envVariable.API_AVAILABLE_CORS).split(", ");
   }
@@ -86,7 +83,7 @@ export class App implements IApp {
   }
 
   private async registerPlugins(): Promise<void> {
-    const plugins: IAppPlugin[] = [new CorsPlugin(this.availableOrigins), new AuthorizationPlugin(this.jwtSecret)];
+    const plugins: IAppPlugin[] = [new CorsPlugin(this.availableOrigins), this.authorizationPlugin];
 
     for (const plugin of plugins) {
       const { pluginEntity, options } = plugin.install();

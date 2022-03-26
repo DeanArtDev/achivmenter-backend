@@ -13,6 +13,7 @@ import FinancialReportRepository from "./repositories/financial-report.repositor
 import IFinancialPartRepository from "./repositories/interfaces/financial-part.repository.interface";
 import { IUserController, UserController } from "./routes/user/controller";
 import { JWTService, IJWTService } from "./services/jwt-service";
+import { AuthorizationPlugin, IAppPlugin } from "./app/plugins";
 import IUserRepository from "./repositories/interfaces/user.repository.interface";
 import UserRepository from "./repositories/user.repository";
 import IUserService from "./routes/user/service/user.service.interface";
@@ -48,6 +49,10 @@ const userModules = new ContainerModule((bind: interfaces.Bind) => {
   bind<IUserRepository>(dependenciesType.IUserRepository).to(UserRepository).inSingletonScope();
 });
 
+const pluginModules = new ContainerModule((bind: interfaces.Bind) => {
+  bind<IAppPlugin>(dependenciesType.AuthorizationPlugin).to(AuthorizationPlugin).inSingletonScope();
+});
+
 /* todo:
  *   1. [-] большая проблемма, при ошибке в репозитории (создание, update) ни чего не отвечаем пользователю
  *   2. [-] большая проблемма, нет внятной обработки exceptions
@@ -57,6 +62,7 @@ const bootstrap = () => {
   container.load(commonModules);
   container.load(financialModules);
   container.load(userModules);
+  container.load(pluginModules);
   const app = container.get<IApp>(dependenciesType.IApp);
   app.init();
 };

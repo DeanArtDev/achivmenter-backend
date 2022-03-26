@@ -15,4 +15,7 @@ export const dependenciesType = {
   IUserRepository: Symbol.for("IUserRepository"),
 
   IJWTService: Symbol.for("IJWTService"),
+
+  // # plugins
+  AuthorizationPlugin: Symbol.for("AuthorizationPlugin"),
 };

@@ -1,8 +1,10 @@
 import IJWTService from "./jwt.service.interface";
-import { sign, verify } from "jsonwebtoken";
+import { sign, verify as jwtVerify } from "jsonwebtoken";
+import { JWTPayload } from "./types";
 import { envVariable, IConfigService } from "../../config";
 import { inject, injectable } from "inversify";
 import { dependenciesType } from "../../dependencies.types";
+import "reflect-metadata";
 
 const JWT_ALGORITHM = "HS256";
 
@@ -24,11 +26,11 @@ export default class JWTService implements IJWTService {
     });
   }
 
-  public async verify(token: string): Promise<boolean> {
+  public async verify(token: string): Promise<JWTPayload | null> {
     return new Promise((resolve, reject) => {
-      verify(token, this.secret, (err, decoded) => {
-        if (err) reject(false);
-        if (decoded) resolve(!decoded);
+      jwtVerify(token, this.secret, (err, payload) => {
+        if (err || !payload) reject(null);
+        resolve(payload as JWTPayload);
       });
     });
   }

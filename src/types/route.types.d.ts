@@ -1,15 +1,7 @@
-import { HTTPMethods, RouteHandlerMethod, RouteShorthandOptions, FastifyReply } from "fastify";
+import { FastifyReply, FastifyRequest, HTTPMethods } from "fastify";
+import { RouteOptions } from "fastify/types/route";
 
-export type AppRoute = {
-  url: string;
-  method: keyof Pick<HTTPMethods, "DELETE" | "GET" | "PATCH" | "POST" | "PUT">;
-  handler: (request: FastifyRequest, replay: FastifyReply) => void;
-  schema?: RouteSchema;
-  hooks?: RouteHookMap;
-};
-
-type RouteHooks = Pick<RouteShorthandOptions, "onRequest" | "onResponse" | "onError" | "preHandler">;
-type RouteSchema = RouteShorthandOptions["schema"];
-type RouteHookMap = {
-  [I in keyof RouteHooks]: RouteHooks[I];
+export type AppRoute = Omit<RouteOptions, "method", "handler"> & {
+  method: keyof Pick<HTTPMethods, "DELETE" | "GET" | "POST" | "PUT">;
+  handler: (request: FastifyRequest, replay: FastifyReply) => Promise<void>;
 };

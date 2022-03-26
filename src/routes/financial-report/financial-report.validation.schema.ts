@@ -41,14 +41,27 @@ const FinancialPeriodCreateSchema = {
   },
 };
 
-export const validationSchemaOfCreate = {
+export const validationSchemaCreate = {
   tags: ["Financial report"],
   description: "Create a financial report",
   body: FinancialPeriodCreateSchema,
   response: { 201: FinancialPeriodResponseSchema },
 };
 
-export const validationSchemaOfGetAll = {
+export const validationSchemaDelete = {
+  tags: ["Financial report"],
+  description: "Delete a financial report",
+  params: {
+    type: "object",
+    required: ["id"],
+    properties: {
+      id: { type: "string" },
+    },
+  },
+  response: { 201: FinancialPeriodResponseSchema },
+};
+
+export const validationSchemaGetAll = {
   tags: ["Financial report"],
   description: "Get all financial reports",
   response: {

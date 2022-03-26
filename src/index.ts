@@ -5,15 +5,19 @@ import { dependenciesType } from "./dependencies.types";
 import { ConfigService, IConfigService } from "./config";
 import { DataBaseService, IDataBaseService } from "./database";
 import { IFinancialReportController, FinancialReportController } from "./routes/financial-report/controller";
-import {
-  FinancialReportRepository,
-  IFinancialReportRepository,
-  FinancialPartRepository,
-  IFinancialPartRepository,
-} from "./routes/financial-report/repository";
 import { FinancialReportService, IFinancialReportService } from "./routes/financial-report/service";
-import { CorsPlugin, IAppPlugin } from "./app/plugins";
 import { ExceptionFilter, IExceptionFilter } from "./error";
+import FinancialPartRepository from "./repositories/financial-part.repository";
+import IFinancialReportRepository from "./repositories/interfaces/financial-report.repository.interface";
+import FinancialReportRepository from "./repositories/financial-report.repository";
+import IFinancialPartRepository from "./repositories/interfaces/financial-part.repository.interface";
+import { IUserController, UserController } from "./routes/user/controller";
+import { JWTService, IJWTService } from "./services/jwt-service";
+import { AuthorizationPlugin, IAppPlugin } from "./app/plugins";
+import IUserRepository from "./repositories/interfaces/user.repository.interface";
+import UserRepository from "./repositories/user.repository";
+import IUserService from "./routes/user/service/user.service.interface";
+import UserService from "./routes/user/service/user.service";
 
 const commonModules = new ContainerModule((bind: interfaces.Bind) => {
   bind<IApp>(dependenciesType.IApp).to(App).inSingletonScope();
@@ -21,10 +25,7 @@ const commonModules = new ContainerModule((bind: interfaces.Bind) => {
   bind<IExceptionFilter>(dependenciesType.IExceptionFilter).to(ExceptionFilter).inSingletonScope();
   bind<IConfigService>(dependenciesType.IConfigService).to(ConfigService).inSingletonScope();
   bind<IDataBaseService>(dependenciesType.IDataBaseService).to(DataBaseService).inSingletonScope();
-});
-
-const pluginsModules = new ContainerModule((bind: interfaces.Bind) => {
-  bind<IAppPlugin>(dependenciesType.CorsPlugin).to(CorsPlugin).inSingletonScope();
+  bind<IJWTService>(dependenciesType.IJWTService).to(JWTService).inSingletonScope();
 });
 
 const financialModules = new ContainerModule((bind: interfaces.Bind) => {
@@ -42,6 +43,16 @@ const financialModules = new ContainerModule((bind: interfaces.Bind) => {
     .inSingletonScope();
 });
 
+const userModules = new ContainerModule((bind: interfaces.Bind) => {
+  bind<IUserController>(dependenciesType.IUserController).to(UserController).inSingletonScope();
+  bind<IUserService>(dependenciesType.IUserService).to(UserService).inSingletonScope();
+  bind<IUserRepository>(dependenciesType.IUserRepository).to(UserRepository).inSingletonScope();
+});
+
+const pluginModules = new ContainerModule((bind: interfaces.Bind) => {
+  bind<IAppPlugin>(dependenciesType.AuthorizationPlugin).to(AuthorizationPlugin).inSingletonScope();
+});
+
 /* todo:
  *   1. [-] большая проблемма, при ошибке в репозитории (создание, update) ни чего не отвечаем пользователю
  *   2. [-] большая проблемма, нет внятной обработки exceptions
@@ -49,8 +60,9 @@ const financialModules = new ContainerModule((bind: interfaces.Bind) => {
 const bootstrap = () => {
   const container = new Container();
   container.load(commonModules);
-  container.load(pluginsModules);
   container.load(financialModules);
+  container.load(userModules);
+  container.load(pluginModules);
   const app = container.get<IApp>(dependenciesType.IApp);
   app.init();
 };

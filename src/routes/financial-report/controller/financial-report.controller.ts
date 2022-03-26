@@ -5,50 +5,56 @@ import { ILogger } from "../../../logger";
 import { AppRoute } from "../../../types/route.types";
 import { IFinancialReportService } from "../service";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { FinancialReportResponseDTO } from "../dto/financial-report.dto";
+import { FinancialReportResponseDTO } from "../financial-report.dto";
 import { FinancialReportModelComplete } from "../types";
 import { dependenciesType } from "../../../dependencies.types";
-import { validationSchemaOfCreate, validationSchemaOfGetAll } from "../financial-report.validation.schema";
+import {
+  validationSchemaCreate,
+  validationSchemaDelete,
+  validationSchemaGetAll,
+} from "../financial-report.validation.schema";
 import { BaseController } from "../../../common/base.controller";
 import { HTTPError, IExceptionFilter } from "../../../error";
-import "reflect-metadata";
+import { AuthGuardMiddleware } from "../../../middlewares";
 
 @injectable()
 export default class FinancialReportController extends BaseController implements IFinancialReportController {
   private readonly url = "/financial-report";
 
-  //todo: [hp] add validation schemas
   public routes: AppRoute[] = [
     {
       url: this.url,
       method: "GET",
-      schema: validationSchemaOfGetAll,
+      schema: validationSchemaGetAll,
       handler: this.onGetAllHandler.bind(this),
+      onRequest: [new AuthGuardMiddleware().execute],
     },
     {
       url: this.url,
-      schema: validationSchemaOfCreate,
+      schema: validationSchemaCreate,
       method: "POST",
       handler: this.onCreateHandler.bind(this),
+      onRequest: [new AuthGuardMiddleware().execute],
     },
     {
       url: this.url,
-      // schema: validationSchemaOfCreate,
+      schema: validationSchemaCreate,
       method: "PUT",
       handler: this.onUpdateHandler.bind(this),
+      onRequest: [new AuthGuardMiddleware().execute],
     },
     {
       url: this.url + "/:id",
-      // schema: validationSchemaOfDelete,
+      schema: validationSchemaDelete,
       method: "DELETE",
       handler: this.onDeleteHandler.bind(this),
+      onRequest: [new AuthGuardMiddleware().execute],
     },
   ];
 
   constructor(
     @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
-    @inject(dependenciesType.IFinancialReportService)
-    private readonly financialReportService: IFinancialReportService,
+    @inject(dependenciesType.IFinancialReportService) private readonly financialReportService: IFinancialReportService,
     @inject(dependenciesType.IExceptionFilter) private readonly exceptionFilter: IExceptionFilter,
   ) {
     super(loggerService);

@@ -1,6 +1,6 @@
 import { FinancialPartModel, FinancialReportModel } from "@prisma/client";
-import FinancialPart from "../entity/financial-part.entity";
-import { InputFinancialPartModel, InputFinancialPartModelUpdate } from "../types";
+import FinancialPart from "../../entities/financial-part.entity";
+import { InputFinancialPartModel, InputFinancialPartModelUpdate } from "../../routes/financial-report/types";
 
 export default interface IFinancialPartRepository {
   update(part: InputFinancialPartModel): Promise<FinancialPartModel>;

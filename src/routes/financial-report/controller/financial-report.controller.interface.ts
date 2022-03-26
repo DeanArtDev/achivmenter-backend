@@ -1,5 +1,3 @@
-import { AppRoute } from "../../../types/route.types";
+import IRoutes from "../../types";
 
-export default interface IFinancialReportController {
-  routes: AppRoute[];
-}
+export default interface IFinancialReportController extends IRoutes {};

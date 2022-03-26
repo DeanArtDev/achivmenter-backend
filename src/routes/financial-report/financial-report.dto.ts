@@ -1,4 +1,4 @@
-import { UniqID } from "../../../types/common.types";
+import { UniqID } from "../../types/common.types";
 
 export type FinancialReportDTO = {
   month: number;

@@ -1,10 +1,10 @@
 import { injectable, inject } from "inversify";
-import { ILogger } from "../../../logger";
-import IFinancialReportRepository from "./financial-report.repository.interface";
-import { IDataBaseService } from "../../../database";
-import { FinancialReportModelComplete, InputFinancialReportModel } from "../types";
-import { dependenciesType } from "../../../dependencies.types";
-import FinancialReport from "../entity/financial-report.entity";
+import { ILogger } from "../logger";
+import IFinancialReportRepository from "./interfaces/financial-report.repository.interface";
+import { IDataBaseService } from "../database";
+import { FinancialReportModelComplete, InputFinancialReportModel } from "../routes/financial-report/types";
+import { dependenciesType } from "../dependencies.types";
+import FinancialReport from "../entities/financial-report.entity";
 
 @injectable()
 export default class FinancialReportRepository implements IFinancialReportRepository {

@@ -9,4 +9,10 @@ export const dependenciesType = {
   IFinancialReportService: Symbol.for("IFinancialReportService"),
   IFinancialReportRepository: Symbol.for("IFinancialReportRepository"),
   IFinancialPartRepository: Symbol.for("IFinancialPartRepository"),
+
+  IUserController: Symbol.for("IUserController"),
+  IUserService: Symbol.for("IUserService"),
+  IUserRepository: Symbol.for("IUserRepository"),
+
+  IJWTService: Symbol.for("IJWTService"),
 };

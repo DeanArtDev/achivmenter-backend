@@ -4,7 +4,6 @@ import { HookHandlerDoneFunction } from "fastify/types/hooks";
 
 export default class AuthGuardMiddleware implements IMiddleware {
   execute(request: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) {
-    console.log("GUARD");
     if (reply.context.config.authUser) return done();
     reply.code(401).send({ message: "Unauthorised" });
   }

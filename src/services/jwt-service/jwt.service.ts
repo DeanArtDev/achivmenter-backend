@@ -1,5 +1,5 @@
 import IJWTService from "./jwt.service.interface";
-import { sign, verify as jwtVerify } from "jsonwebtoken";
+import { sign as signJWT, verify as jwtVerify } from "jsonwebtoken";
 import { JWTPayload } from "./types";
 import { envVariable, IConfigService } from "../../config";
 import { inject, injectable } from "inversify";
@@ -14,7 +14,7 @@ export default class JWTService implements IJWTService {
 
   public sign<T extends Record<string, any>>(payload: T): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      sign(
+      signJWT(
         { ...payload, iat: Math.floor(Date.now() / 1000) },
         this.secret,
         { algorithm: JWT_ALGORITHM },

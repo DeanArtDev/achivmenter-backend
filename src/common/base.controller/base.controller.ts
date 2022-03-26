@@ -23,5 +23,6 @@ export default class BaseController implements IBaseController {
 
   public error(replay: FastifyReply, error: HTTPError): void {
     replay.status(error.statusCode).send(error);
+    this.logger.log("[BaseController ERROR]", `${replay.request.method}:${replay.request.url}`, `CODE: ${error.statusCode}`);
   }
 }

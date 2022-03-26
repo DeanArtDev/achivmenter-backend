@@ -36,7 +36,9 @@ export default class UserController extends BaseController implements IUserContr
     },
   ];
 
-  //todo: добавить обработку exceptions
+  //todo: [-] добавить обработку exceptions
+  //todo: [-] добавить схему валидации
+
   private async onUserLogin(request: FastifyRequest<{ Body: LoginRequestDTO }>, replay: FastifyReply): Promise<void> {
     const { email, password } = request.body;
 

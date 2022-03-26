@@ -5,7 +5,7 @@ import { ILogger } from "../../../logger";
 import { AppRoute } from "../../../types/route.types";
 import { IFinancialReportService } from "../service";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { FinancialReportResponseDTO } from "../dto/financial-report.dto";
+import { FinancialReportResponseDTO } from "../financial-report.dto";
 import { FinancialReportModelComplete } from "../types";
 import { dependenciesType } from "../../../dependencies.types";
 import {
@@ -22,7 +22,6 @@ import "reflect-metadata";
 export default class FinancialReportController extends BaseController implements IFinancialReportController {
   private readonly url = "/financial-report";
 
-  //todo: [hp] add validation schemas
   public routes: AppRoute[] = [
     {
       url: this.url,
@@ -36,18 +35,21 @@ export default class FinancialReportController extends BaseController implements
       schema: validationSchemaCreate,
       method: "POST",
       handler: this.onCreateHandler.bind(this),
+      onRequest: [new AuthGuardMiddleware().execute],
     },
     {
       url: this.url,
       schema: validationSchemaCreate,
       method: "PUT",
       handler: this.onUpdateHandler.bind(this),
+      onRequest: [new AuthGuardMiddleware().execute],
     },
     {
       url: this.url + "/:id",
       schema: validationSchemaDelete,
       method: "DELETE",
       handler: this.onDeleteHandler.bind(this),
+      onRequest: [new AuthGuardMiddleware().execute],
     },
   ];
 

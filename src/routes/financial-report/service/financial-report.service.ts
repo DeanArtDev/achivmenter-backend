@@ -1,19 +1,22 @@
 import { inject, injectable } from "inversify";
 import { difference } from "lodash";
 import { FinancialPartModel } from "@prisma/client";
+import IFinancialReportRepository from "../../../repositories/financial-report.repository.interface";
+import IFinancialPartRepository from "../../../repositories/financial-part.repository.interface";
 import IFinancialReportService from "./financial-report.service.interface";
-import { FinancialPartCreateDTO, FinancialReportCreateDTO, FinancialReportDTO } from "../dto/financial-report.dto";
-import { IFinancialPartRepository, IFinancialReportRepository } from "../repository";
+import { FinancialPartCreateDTO, FinancialReportCreateDTO, FinancialReportDTO } from "../financial-report.dto";
 import { FinancialReportModelComplete } from "../types";
 import { dependenciesType } from "../../../dependencies.types";
-import FinancialReport from "../entity/financial-report.entity";
+import FinancialReport from "../../../entities/financial-report.entity";
 import "reflect-metadata";
 
 @injectable()
 export default class FinancialReportService implements IFinancialReportService {
   constructor(
-    @inject(dependenciesType.IFinancialReportRepository) private financialReportRepository: IFinancialReportRepository,
-    @inject(dependenciesType.IFinancialPartRepository) private financialPartRepository: IFinancialPartRepository,
+    @inject(dependenciesType.IFinancialReportRepository)
+    private readonly financialReportRepository: IFinancialReportRepository,
+    @inject(dependenciesType.IFinancialPartRepository)
+    private readonly financialPartRepository: IFinancialPartRepository,
   ) {}
 
   public async getAll(): Promise<FinancialReportModelComplete[]> {

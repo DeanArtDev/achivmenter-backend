@@ -1,4 +1,4 @@
-import { FinancialReportDTO, FinancialReportResponseDTO } from "../dto/financial-report.dto";
+import { FinancialReportDTO, FinancialReportResponseDTO } from "../financial-report.dto";
 import { FinancialReportModelComplete } from "../types";
 
 export default interface IFinancialReportService {

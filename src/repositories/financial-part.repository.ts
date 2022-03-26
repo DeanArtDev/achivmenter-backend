@@ -1,11 +1,11 @@
 import { FinancialPartModel } from "@prisma/client";
 import { inject, injectable } from "inversify";
-import FinancialPart from "../entity/financial-part.entity";
+import FinancialPart from "../entities/financial-part.entity";
 import IFinancialPartRepository from "./financial-part.repository.interface";
-import { InputFinancialPartModel, InputFinancialPartModelUpdate } from "../types";
-import { ILogger } from "../../../logger";
-import { IDataBaseService } from "../../../database";
-import { dependenciesType } from "../../../dependencies.types";
+import { InputFinancialPartModel, InputFinancialPartModelUpdate } from "../routes/financial-report/types";
+import { ILogger } from "../logger";
+import { IDataBaseService } from "../database";
+import { dependenciesType } from "../dependencies.types";
 import "reflect-metadata";
 
 @injectable()

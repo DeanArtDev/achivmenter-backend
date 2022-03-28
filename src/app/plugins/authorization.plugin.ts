@@ -27,7 +27,10 @@ export default class AuthorizationPlugin implements IAppPlugin {
   }
 
   private async onRequestCheckAuthorization(request: FastifyRequest, _: FastifyReply): Promise<void> {
-    if (!request.headers.authorization) return;
+    if (!request.headers.authorization) {
+      request.context.config = this.setContextConfig(request.context.config, null);
+      return;
+    }
 
     try {
       const decodedTokenData = await this.jwtService.verify(request.headers.authorization.split(" ")[1]);

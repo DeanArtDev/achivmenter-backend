@@ -14,6 +14,6 @@ export default class UserRepository implements IUserRepository {
   }
 
   public async createUser({ email, password }: User): Promise<UserModel> {
-    return await this.db.client.userModel.create({ data: { email, password } });
+    return await this.db.client.userModel.create({ data: { email, hash: password } });
   }
 }

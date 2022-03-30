@@ -12,23 +12,29 @@ model FinancialPartModel {
   id                Int                  @id @default(autoincrement())
   income            Int
   common            Int                  @db.SmallInt
-  piggyBank         Int                  @db.SmallInt
+  piggyBank         Int                  @map("biggy_bank") @db.SmallInt
   free              Int                  @db.SmallInt
-  financialReportId Int
+  financialReportId Int                  @map("financial_report_id")
   FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
+
+  @@map("financial_parts")
 }
 
 model FinancialReportModel {
   id        Int                  @id @default(autoincrement())
   month     Int                  @db.SmallInt
   year      Int                  @db.SmallInt
-  partCount Int                  @db.SmallInt
-  createdAt DateTime             @default(now()) @db.Timestamp(6)
+  partCount Int                  @map("part_count") @db.SmallInt
+  createdAt DateTime             @default(now()) @map("created_at") @db.Timestamp(6)
   parts     FinancialPartModel[]
+
+  @@map("financial_reports")
 }
 
 model UserModel {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  hash  String @map("password_hash")
+
+  @@map("users")
 }

@@ -45,7 +45,7 @@ export default class UserController extends BaseController implements IUserContr
     const userModel = await this.userService.checkUser(email);
     if (!userModel) return this.error(replay, new HTTPError(404, "There is no such user."));
 
-    const loggingInUser = new User(userModel.email, userModel.password);
+    const loggingInUser = new User(userModel.email, userModel.hash);
     const isCorrectPassword = await loggingInUser.comparePassword(password);
     if (isCorrectPassword) {
       const jwt = await this.jwtService.sign({ email: userModel.email });

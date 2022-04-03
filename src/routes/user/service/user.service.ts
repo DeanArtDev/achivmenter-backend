@@ -4,6 +4,7 @@ import IUserRepository from "../../../repositories/interfaces/user.repository.in
 import { RegistrationRequestDTO } from "../user.dto";
 import { envVariable, IConfigService } from "../../../config";
 import { UserModel } from "@prisma/client";
+import { HTTPError } from "../../../error";
 import { dependenciesType } from "../../../dependencies.types";
 import User from "../../../entities/user.entity";
 
@@ -22,6 +23,7 @@ export default class UserService implements IUserService {
   }
 
   public async createUser({ email, password }: RegistrationRequestDTO): Promise<UserModel | null> {
+    if (!email || !password) throw new HTTPError(400, "Both fields should be fill", { email, password });
     const isUserExisted = await this.userRepository.getOne(email);
     if (isUserExisted) return null;
 

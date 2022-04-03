@@ -11,6 +11,9 @@ import User from "../../../entities/user.entity";
 import { HTTPError } from "../../../error";
 import { dependenciesType } from "../../../dependencies.types";
 
+//todo: [-] добавить схему валидации
+//todo: [-] добавить обработку exceptions
+
 @injectable()
 export default class UserController extends BaseController implements IUserController {
   private readonly url = "/user";
@@ -35,9 +38,6 @@ export default class UserController extends BaseController implements IUserContr
       handler: this.onUserRegister.bind(this),
     },
   ];
-
-  //todo: [-] добавить обработку exceptions
-  //todo: [-] добавить схему валидации
 
   private async onUserLogin(request: FastifyRequest<{ Body: LoginRequestDTO }>, replay: FastifyReply): Promise<void> {
     const { email, password } = request.body;

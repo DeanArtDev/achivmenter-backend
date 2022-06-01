@@ -12,14 +12,13 @@ model FinancialPartModel {
   id        Int @id @default(autoincrement())
   income    Int
   common    Int @db.SmallInt
-  piggyBank Int @map("biggy_bank") @db.SmallInt
   free      Int @db.SmallInt
+  piggyBank Int @map("biggy_bank") @db.SmallInt
 
   financialReportId Int                  @map("financial_report_id")
   FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
 
-  correctionIds Int[]           @map("correction_ids")
-  Corrections   CorrectionModel @relation(fields: [correctionIds], references: [id], onDelete: Cascade)
+  corectins CorrectionModel[]
 
   @@map("financial_parts")
 }
@@ -28,8 +27,8 @@ model FinancialReportModel {
   id        Int                  @id @default(autoincrement())
   month     Int                  @db.SmallInt
   year      Int                  @db.SmallInt
-  partCount Int                  @map("part_count") @db.SmallInt
   createdAt DateTime             @default(now()) @map("created_at") @db.Timestamp(6)
+  partCount Int                  @map("part_count") @db.SmallInt
   parts     FinancialPartModel[]
 
   @@map("financial_reports")
@@ -49,7 +48,8 @@ model CorrectionModel {
   amount    Int
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
 
-  FinancialPartModel FinancialPartModel[]
+  financialPartId Int                @map("financial_part_id")
+  FinancialPart   FinancialPartModel @relation(fields: [financialPartId], references: [id], onDelete: Cascade)
 
   @@map("corrections")
 }

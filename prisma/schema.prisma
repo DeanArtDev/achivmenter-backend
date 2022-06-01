@@ -9,13 +9,17 @@ datasource db {
 }
 
 model FinancialPartModel {
-  id                Int                  @id @default(autoincrement())
-  income            Int
-  common            Int                  @db.SmallInt
-  piggyBank         Int                  @map("biggy_bank") @db.SmallInt
-  free              Int                  @db.SmallInt
+  id        Int @id @default(autoincrement())
+  income    Int
+  common    Int @db.SmallInt
+  piggyBank Int @map("biggy_bank") @db.SmallInt
+  free      Int @db.SmallInt
+
   financialReportId Int                  @map("financial_report_id")
   FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
+
+  correctionIds Int[]           @map("correction_ids")
+  Corrections   CorrectionModel @relation(fields: [correctionIds], references: [id], onDelete: Cascade)
 
   @@map("financial_parts")
 }
@@ -37,4 +41,15 @@ model UserModel {
   hash  String @map("password_hash")
 
   @@map("users")
+}
+
+model CorrectionModel {
+  id        Int      @id @default(autoincrement())
+  name      String
+  amount    Int
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  FinancialPartModel FinancialPartModel[]
+
+  @@map("corrections")
 }

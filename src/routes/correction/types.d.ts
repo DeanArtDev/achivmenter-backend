@@ -1,13 +1,10 @@
-import { CorrectionModel } from "@prisma/client";
+import { CorrectionModel, FinancialPartModel } from "@prisma/client";
 import { UniqID } from "../../types/common.types";
 
 export type InputCorrectionSearch = {
-  ids: CorrectionModel["id"][];
+  ids?: CorrectionModel["id"][];
+  financialPartId?: FinancialPartModel["id"];
 };
-
-export type InputCorrectionModel = Omit<CorrectionModel, "createAt">;
-
-export type InputCreateCorrection = CorrectionDTO & { financialPartId: CorrectionModel["financialPartId"]};
 
 export type CorrectionDTO = {
   name: string;
@@ -15,3 +12,7 @@ export type CorrectionDTO = {
 };
 
 export type CorrectionComplete = CorrectionDTO & { id: UniqID };
+
+export type InputCreateCorrection = CorrectionDTO & { financialPartId: FinancialPartModel["id"] };
+
+export type InputUpdateCorrection = CorrectionComplete;

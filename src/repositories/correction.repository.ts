@@ -3,9 +3,9 @@ import { inject, injectable } from "inversify";
 import ICorrectionRepository from "./interfaces/correctin.repository.interface";
 import { ILogger } from "../logger";
 import { IDataBaseService } from "../database";
-import { dependenciesType } from "../dependencies.types";
+import { InputUpdateCorrection } from "../routes/correction/types";
 import Correction from "../entities/correction.entity";
-import { InputCorrectionModel } from "../routes/correction/types";
+import { dependenciesType } from "../dependencies.types";
 
 const isCorrection = (correction: CorrectionModel | null): correction is CorrectionModel => {
   if (!correction) return false;
@@ -19,12 +19,15 @@ export default class CorrectionRepository implements ICorrectionRepository {
     @inject(dependenciesType.IDataBaseService) private readonly db: IDataBaseService,
   ) {}
 
-  public async create(correction: Correction, partId: FinancialPartModel["id"]): Promise<CorrectionModel> {
-    return await this.db.client.correctionModel.create({ data: { financialPartId: partId, ...correction } });
+  public async create(
+    correction: Correction,
+    financialPartId: FinancialPartModel["id"],
+  ): Promise<CorrectionModel | null> {
+    return await this.db.client.correctionModel.create({ data: { ...correction, financialPartId } });
   }
 
-  public async createMany(corrections: Correction[], partId: FinancialPartModel["id"]): Promise<number> {
-    const data = corrections.map((c) => ({ financialPartId: partId, ...c }));
+  public async createMany(corrections: Correction[], financialPartId: FinancialPartModel["id"]): Promise<number> {
+    const data = corrections.map((c) => ({ ...c, financialPartId }));
     const response = await this.db.client.correctionModel.createMany({ data: data });
     return response.count;
   }
@@ -34,13 +37,17 @@ export default class CorrectionRepository implements ICorrectionRepository {
     return !!deletedCorrection;
   }
 
-  public async update({ id, ...others }: InputCorrectionModel): Promise<CorrectionModel> {
-    return await this.db.client.correctionModel.update({ where: { id: id }, data: others });
+  public async update({ id, ...others }: InputUpdateCorrection): Promise<CorrectionModel | null> {
+    return await this.db.client.correctionModel.update({ where: { id: Number(id) }, data: others });
   }
 
-  public async searchById(ids: CorrectionModel["id"][]): Promise<CorrectionModel[]> {
-    const requests = ids.map((id) => this.db.client.correctionModel.findFirst({ where: { id } }));
-    const result = await Promise.all(requests);
-    return result.filter(isCorrection);
+  public async searchByPartId(financialPartId: FinancialPartModel["id"]): Promise<CorrectionModel[]> {
+    return await this.db.client.correctionModel.findMany({ where: { financialPartId } });
+  }
+
+  public async searchByIds(correctionIds: CorrectionModel["id"][]): Promise<CorrectionModel[]> {
+    const requests = correctionIds.map((id) => this.db.client.correctionModel.findFirst({ where: { id } }));
+    const searchResult = await Promise.all(requests);
+    return searchResult.filter(isCorrection);
   }
 }

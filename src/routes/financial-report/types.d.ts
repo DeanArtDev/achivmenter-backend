@@ -1,4 +1,4 @@
-import { FinancialPartModel, FinancialReportModel } from "@prisma/client";
+import { CorrectionModel, FinancialPartModel, FinancialReportModel } from "@prisma/client";
 
 export type InputFinancialPartModel = Omit<FinancialPartModel, "financialReportId">;
 
@@ -10,3 +10,5 @@ export type InputFinancialPartModelUpdate = Omit<InputFinancialPartModel, "id"> 
 export type InputFinancialReportModel = Omit<FinancialReportModelComplete, "parts" | "createdAt"> & {
   parts: InputFinancialPartModelUpdate[];
 };
+
+export type InputCorrectionModel = Omit<CorrectionModel, "createAt">

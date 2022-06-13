@@ -3,9 +3,9 @@ import { inject, injectable } from "inversify";
 import ICorrectionRepository from "./interfaces/correctin.repository.interface";
 import { ILogger } from "../logger";
 import { IDataBaseService } from "../database";
-import { InputCorrectionModel } from "../routes/financial-report/types";
 import { dependenciesType } from "../dependencies.types";
 import Correction from "../entities/correction.entity";
+import { InputCorrectionModel } from "../routes/correction/types";
 
 const isCorrection = (correction: CorrectionModel | null): correction is CorrectionModel => {
   if (!correction) return false;

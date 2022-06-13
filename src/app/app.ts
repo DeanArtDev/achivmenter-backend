@@ -3,6 +3,7 @@ import { inject, injectable } from "inversify";
 import { IApp } from "./app.interface";
 import { IFinancialReportController } from "../routes/financial-report/controller";
 import { IUserController } from "../routes/user/controller";
+import ICorrectionController from "../routes/correction/controller/correction.controller.interface";
 import { envVariable, IConfigService } from "../config";
 import { AppRoute } from "../types/route.types";
 import { ILogger } from "../logger";
@@ -17,8 +18,11 @@ export class App implements IApp {
     @inject(dependenciesType.IConfigService) private configService: IConfigService,
     @inject(dependenciesType.IDataBaseService) private readonly db: IDataBaseService,
     @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
+
     @inject(dependenciesType.IFinancialReportController) private financialReportController: IFinancialReportController,
     @inject(dependenciesType.IUserController) private userController: IUserController,
+    @inject(dependenciesType.ICorrectionController) private correctionController: ICorrectionController,
+
     @inject(dependenciesType.AuthorizationPlugin) private authorizationPlugin: IAppPlugin,
   ) {
     this.app = Fastify();
@@ -68,7 +72,11 @@ export class App implements IApp {
 
   private async bindRouters(): Promise<void> {
     const routes: AppRoute[] = [];
-    routes.push(...this.financialReportController.routes, ...this.userController.routes);
+    routes.push(
+      ...this.financialReportController.routes,
+      ...this.userController.routes,
+      ...this.correctionController.routes,
+    );
 
     await this.app.register(
       (instance, _, done) => {

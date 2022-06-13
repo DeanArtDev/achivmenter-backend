@@ -23,6 +23,12 @@ export default class CorrectionRepository implements ICorrectionRepository {
     return await this.db.client.correctionModel.create({ data: { financialPartId: partId, ...correction } });
   }
 
+  public async createMany(corrections: Correction[], partId: FinancialPartModel["id"]): Promise<number> {
+    const data = corrections.map((c) => ({ financialPartId: partId, ...c }));
+    const response = await this.db.client.correctionModel.createMany({ data: data });
+    return response.count;
+  }
+
   public async delete(correctionId: CorrectionModel["id"]): Promise<boolean> {
     const deletedCorrection = await this.db.client.correctionModel.delete({ where: { id: correctionId } });
     return !!deletedCorrection;

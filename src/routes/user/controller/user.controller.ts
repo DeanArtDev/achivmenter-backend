@@ -6,7 +6,7 @@ import { IJWTService } from "../../../services/jwt-service";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { ILogger } from "../../../logger";
 import { LoginRequestDTO, LoginResponseDTO, RegistrationRequestDTO, RegistrationResponseDTO } from "../user.dto";
-import { BaseController } from "../../../common/base.controller";
+import { BaseController } from "../../../common/base-controller";
 import User from "../../../entities/user.entity";
 import { HTTPError } from "../../../error";
 import { dependenciesType } from "../../../dependencies.types";

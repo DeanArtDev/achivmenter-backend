@@ -17,6 +17,8 @@ import { BaseController } from "../../../common/base-controller";
 import { HTTPError, IExceptionFilter } from "../../../error";
 import { AuthGuardMiddleware } from "../../../middlewares";
 
+/* todo:
+ *   1. переименовать обработчики, убрать handler */
 @injectable()
 export default class FinancialReportController extends BaseController implements IFinancialReportController {
   private readonly url = "/financial-report";

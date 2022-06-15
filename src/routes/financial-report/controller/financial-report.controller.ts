@@ -73,7 +73,7 @@ export default class FinancialReportController extends BaseController implements
   ): Promise<void> {
     const { month, year, partCount, parts } = body;
     const report = await this.financialReportService.create({ month, year, partCount, parts });
-    this.create(replay).send(this.reportResponseAdapter(report));
+    this.create<FinancialReportResponseDTO>(replay, this.reportResponseAdapter(report));
   }
 
   private async onUpdateHandler(

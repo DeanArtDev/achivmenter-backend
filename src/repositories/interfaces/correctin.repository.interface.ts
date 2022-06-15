@@ -6,6 +6,7 @@ export default interface ICorrectionRepository {
   createMany(correction: Correction[], financialPartId: FinancialPartModel["id"]): Promise<number>;
   update(correction: Correction): Promise<CorrectionModel | null>;
   delete(correctionId: CorrectionModel["id"]): Promise<boolean>;
+  deleteByFinancialPartId(financialPartId: FinancialPartModel["id"]): Promise<boolean>;
   searchByPartId(financialPartId: FinancialPartModel["id"]): Promise<CorrectionModel[]>;
   searchByIds(correctionIds: CorrectionModel["id"][]): Promise<CorrectionModel[]>;
 }

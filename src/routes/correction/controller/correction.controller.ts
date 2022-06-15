@@ -7,8 +7,10 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import ICorrectionService from "../service/correction.service.interface";
 import {
   CorrectionComplete,
+  InputSearchCorrection,
   InputCreateCorrection,
-  InputDeleteByFinancialPartIdCorrection, InputDeleteCorrection,
+  InputDeleteByFinancialPartIdCorrection,
+  InputDeleteCorrection,
   InputUpdateCorrection,
 } from "../types";
 import { BaseController } from "../../../common/base-controller";
@@ -47,6 +49,12 @@ export default class CorrectionController extends BaseController implements ICor
       handler: this.onDeleteCorrectionByFinancialPartId.bind(this),
       onRequest: [new AuthGuardMiddleware().execute],
     },
+    {
+      url: this.url + "/search",
+      method: "POST",
+      handler: this.onSearchCorrection.bind(this),
+      onRequest: [new AuthGuardMiddleware().execute],
+    },
   ];
 
   constructor(
@@ -70,14 +78,15 @@ export default class CorrectionController extends BaseController implements ICor
     replay: FastifyReply,
   ): Promise<void> {
     const updatedCorrection = await this.correctionService.update(request.body);
-    !updatedCorrection && this.error(replay, new HTTPError(400, "There is no such a correction to update", request.body));
+    !updatedCorrection &&
+      this.error(replay, new HTTPError(400, "There is no such a correction to update", request.body));
     updatedCorrection && this.ok<CorrectionComplete>(replay, this.responseCorrectionAdapter(updatedCorrection));
   }
 
   private async onDeleteCorrectionByFinancialPartId(
     request: FastifyRequest<{ Body: InputDeleteByFinancialPartIdCorrection }>,
     replay: FastifyReply,
-  ) {
+  ): Promise<void> {
     const isDeleted = await this.correctionService.deleteCorrectionByFinancialPartId(request.body.financialPartId);
     isDeleted && this.ok<boolean>(replay, isDeleted);
   }
@@ -85,9 +94,17 @@ export default class CorrectionController extends BaseController implements ICor
   private async onDeleteCorrection(
     request: FastifyRequest<{ Body: InputDeleteCorrection }>,
     replay: FastifyReply,
-  ) {
+  ): Promise<void> {
     const isDeleted = await this.correctionService.delete(request.body.correctionId);
     isDeleted && this.ok<boolean>(replay, isDeleted);
+  }
+
+  private async onSearchCorrection(
+    request: FastifyRequest<{ Body: InputSearchCorrection }>,
+    replay: FastifyReply,
+  ): Promise<void> {
+    const searchResult = await this.correctionService.search(request.body);
+    this.ok<CorrectionComplete[]>(replay, searchResult.map(this.responseCorrectionAdapter));
   }
 
   private responseCorrectionAdapter(correction: CorrectionModel): CorrectionComplete {

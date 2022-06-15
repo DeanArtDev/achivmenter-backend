@@ -1,5 +1,5 @@
 import { CorrectionModel } from "@prisma/client";
-import { InputCreateCorrection, InputCorrectionSearch, InputUpdateCorrection, CorrectionComplete } from "../types";
+import { InputCreateCorrection, InputSearchCorrection, InputUpdateCorrection, CorrectionComplete } from "../types";
 import { FinancialPartComplete } from "../../financial-report/types";
 
 export default interface ICorrectionService {
@@ -7,5 +7,5 @@ export default interface ICorrectionService {
   update(correction: InputUpdateCorrection): Promise<CorrectionModel | null>;
   delete(correctionId: CorrectionComplete["id"]): Promise<boolean>;
   deleteCorrectionByFinancialPartId(financialPartId: FinancialPartComplete["id"]): Promise<boolean>;
-  search(searchRequest: InputCorrectionSearch): Promise<CorrectionModel[]>;
+  search(searchRequest: InputSearchCorrection): Promise<CorrectionModel[]>;
 }

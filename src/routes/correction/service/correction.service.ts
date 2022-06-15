@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { CorrectionModel } from "@prisma/client";
 import ICorrectionRepository from "../../../repositories/interfaces/correctin.repository.interface";
 import ICorrectionService from "./correction.service.interface";
-import { InputCreateCorrection, InputCorrectionSearch, InputUpdateCorrection, CorrectionComplete } from "../types";
+import { InputCreateCorrection, InputSearchCorrection, InputUpdateCorrection, CorrectionComplete } from "../types";
 import { FinancialPartComplete } from "../../financial-report/types";
 import { dependenciesType } from "../../../dependencies.types";
 
@@ -14,7 +14,7 @@ export default class CorrectionService implements ICorrectionService {
   ) {}
 
   public async create({ financialPartId, ...others }: InputCreateCorrection): Promise<CorrectionModel | null> {
-    return await this.correctionRepository.create(others, financialPartId);
+    return await this.correctionRepository.create(others, Number(financialPartId));
   }
 
   public async update(correction: InputUpdateCorrection): Promise<CorrectionModel | null> {
@@ -29,13 +29,13 @@ export default class CorrectionService implements ICorrectionService {
     return await this.correctionRepository.deleteByFinancialPartId(Number(financialPartId));
   }
 
-  public async search(searchRequest: InputCorrectionSearch): Promise<CorrectionModel[]> {
+  public async search(searchRequest: InputSearchCorrection): Promise<CorrectionModel[]> {
     if (searchRequest.financialPartId) {
-      return await this.correctionRepository.searchByPartId(searchRequest.financialPartId);
+      return await this.correctionRepository.searchByPartId(Number(searchRequest.financialPartId));
     }
 
     if (searchRequest.ids && searchRequest.ids?.length > 0) {
-      return await this.correctionRepository.searchByIds(searchRequest.ids);
+      return await this.correctionRepository.searchByIds(searchRequest.ids.map(Number));
     }
     return [];
   }

@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { CorrectionModel } from "@prisma/client";
 import ICorrectionRepository from "../../../repositories/interfaces/correctin.repository.interface";
 import ICorrectionService from "./correction.service.interface";
-import { InputCreateCorrection, InputSearchCorrection, InputUpdateCorrection, CorrectionComplete } from "../types";
+import { InputCreateCorrection, InputSearchCorrection, InputUpdateCorrection, CorrectionWithId } from "../types";
 import { FinancialPartComplete } from "../../financial-report/types";
 import { dependenciesType } from "../../../dependencies.types";
 
@@ -21,7 +21,7 @@ export default class CorrectionService implements ICorrectionService {
     return await this.correctionRepository.update(correction);
   }
 
-  public async delete(correctionId: CorrectionComplete["id"]): Promise<boolean> {
+  public async delete(correctionId: CorrectionWithId["id"]): Promise<boolean> {
     return await this.correctionRepository.delete(Number(correctionId));
   }
 

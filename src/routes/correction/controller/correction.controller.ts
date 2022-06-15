@@ -6,7 +6,7 @@ import { ILogger } from "../../../logger";
 import { FastifyReply, FastifyRequest } from "fastify";
 import ICorrectionService from "../service/correction.service.interface";
 import {
-  CorrectionComplete,
+  CorrectionWithId,
   InputSearchCorrection,
   InputCreateCorrection,
   InputDeleteByFinancialPartIdCorrection,
@@ -70,7 +70,7 @@ export default class CorrectionController extends BaseController implements ICor
   ): Promise<void> {
     const newCorrection = await this.correctionService.create(request.body);
     !newCorrection && this.error(replay, new HTTPError(422, "Such a correction is already existed", request.body));
-    newCorrection && this.create<CorrectionComplete>(replay, this.responseCorrectionAdapter(newCorrection));
+    newCorrection && this.create<CorrectionWithId>(replay, this.responseCorrectionAdapter(newCorrection));
   }
 
   private async onUpdateCorrection(
@@ -80,7 +80,7 @@ export default class CorrectionController extends BaseController implements ICor
     const updatedCorrection = await this.correctionService.update(request.body);
     !updatedCorrection &&
       this.error(replay, new HTTPError(400, "There is no such a correction to update", request.body));
-    updatedCorrection && this.ok<CorrectionComplete>(replay, this.responseCorrectionAdapter(updatedCorrection));
+    updatedCorrection && this.ok<CorrectionWithId>(replay, this.responseCorrectionAdapter(updatedCorrection));
   }
 
   private async onDeleteCorrectionByFinancialPartId(
@@ -104,10 +104,10 @@ export default class CorrectionController extends BaseController implements ICor
     replay: FastifyReply,
   ): Promise<void> {
     const searchResult = await this.correctionService.search(request.body);
-    this.ok<CorrectionComplete[]>(replay, searchResult.map(this.responseCorrectionAdapter));
+    this.ok<CorrectionWithId[]>(replay, searchResult.map(this.responseCorrectionAdapter));
   }
 
-  private responseCorrectionAdapter(correction: CorrectionModel): CorrectionComplete {
+  private responseCorrectionAdapter(correction: CorrectionModel): CorrectionWithId {
     return {
       id: String(correction.id),
       name: correction.name,

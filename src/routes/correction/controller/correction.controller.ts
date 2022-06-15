@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import { CorrectionModel } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import ICorrectionController from "./correction.controller.interface";
 import { AppRoute } from "../../../types/route.types";
 import { ILogger } from "../../../logger";
@@ -16,10 +17,15 @@ import {
 import { BaseController } from "../../../common/base-controller";
 import { HTTPError } from "../../../error";
 import { AuthGuardMiddleware } from "../../../middlewares";
+import {
+  validationSchemaCreate,
+  validationSchemaDelete,
+  validationSchemaDeleteByFinancialPartId,
+  validationSchemaSearch,
+  validationSchemaUpdate,
+} from "../correction.validation.schema";
 import { dependenciesType } from "../../../dependencies.types";
 
-/* todo:
- *   1. добавить схему валидации к рутам */
 @injectable()
 export default class CorrectionController extends BaseController implements ICorrectionController {
   private readonly url = "/corrections";
@@ -30,30 +36,35 @@ export default class CorrectionController extends BaseController implements ICor
       method: "POST",
       handler: this.onCreateCorrection.bind(this),
       onRequest: [new AuthGuardMiddleware().execute],
+      schema: validationSchemaCreate,
     },
     {
       url: this.url,
       method: "PUT",
       handler: this.onUpdateCorrection.bind(this),
       onRequest: [new AuthGuardMiddleware().execute],
+      schema: validationSchemaUpdate,
     },
     {
       url: this.url,
       method: "DELETE",
       handler: this.onDeleteCorrection.bind(this),
       onRequest: [new AuthGuardMiddleware().execute],
+      schema: validationSchemaDelete,
     },
     {
       url: this.url + "/financial-parts",
       method: "DELETE",
       handler: this.onDeleteCorrectionByFinancialPartId.bind(this),
       onRequest: [new AuthGuardMiddleware().execute],
+      schema: validationSchemaDeleteByFinancialPartId,
     },
     {
       url: this.url + "/search",
       method: "POST",
       handler: this.onSearchCorrection.bind(this),
       onRequest: [new AuthGuardMiddleware().execute],
+      schema: validationSchemaSearch,
     },
   ];
 
@@ -87,16 +98,34 @@ export default class CorrectionController extends BaseController implements ICor
     request: FastifyRequest<{ Body: InputDeleteByFinancialPartIdCorrection }>,
     replay: FastifyReply,
   ): Promise<void> {
-    const isDeleted = await this.correctionService.deleteCorrectionByFinancialPartId(request.body.financialPartId);
-    isDeleted && this.ok<boolean>(replay, isDeleted);
+    try {
+      const isDeleted = await this.correctionService.deleteCorrectionByFinancialPartId(request.body.financialPartId);
+      isDeleted && this.ok<boolean>(replay, isDeleted);
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        this.error(replay, new HTTPError(400, e.code, e.meta));
+      } else {
+        // todo: не очень круто отдавать стек трейс в ответе, подумать об обработке ошибок
+        this.error(replay, new HTTPError(500, "Unrecognized error", e));
+      }
+    }
   }
 
   private async onDeleteCorrection(
     request: FastifyRequest<{ Body: InputDeleteCorrection }>,
     replay: FastifyReply,
   ): Promise<void> {
-    const isDeleted = await this.correctionService.delete(request.body.correctionId);
-    isDeleted && this.ok<boolean>(replay, isDeleted);
+    try {
+      const isDeleted = await this.correctionService.delete(request.body.correctionId);
+      isDeleted && this.ok<boolean>(replay, isDeleted);
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        this.error(replay, new HTTPError(400, e.code, e.meta));
+      } else {
+        // todo: не очень круто отдавать стек трейс в ответе, подумать об обработке ошибок
+        this.error(replay, new HTTPError(500, "Unrecognized error", e));
+      }
+    }
   }
 
   private async onSearchCorrection(

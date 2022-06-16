@@ -1,11 +1,12 @@
 import { inject, injectable } from "inversify";
 import { difference } from "lodash";
-import { FinancialPartModel } from "@prisma/client";
+import { FinancialPartModel, FinancialReportModel } from "@prisma/client";
 import IFinancialReportRepository from "../../../repositories/interfaces/financial-report.repository.interface";
 import IFinancialPartRepository from "../../../repositories/interfaces/financial-part.repository.interface";
 import IFinancialReportService from "./financial-report.service.interface";
 import { FinancialPartCreateDTO, FinancialReportCreateDTO, FinancialReportDTO } from "../financial-report.dto";
 import { FinancialReportModelComplete } from "../types";
+import ICorrectionRepository from "../../../repositories/interfaces/correctin.repository.interface";
 import { dependenciesType } from "../../../dependencies.types";
 import FinancialReport from "../../../entities/financial-report.entity";
 
@@ -16,6 +17,8 @@ export default class FinancialReportService implements IFinancialReportService {
     private readonly financialReportRepository: IFinancialReportRepository,
     @inject(dependenciesType.IFinancialPartRepository)
     private readonly financialPartRepository: IFinancialPartRepository,
+    @inject(dependenciesType.ICorrectionRepository)
+    private readonly correctionRepository: ICorrectionRepository,
   ) {}
 
   public async getAll(): Promise<FinancialReportModelComplete[]> {
@@ -56,10 +59,10 @@ export default class FinancialReportService implements IFinancialReportService {
     await Promise.all(requests);
   }
 
-  private async createOrUpdateParts(parts: FinancialPartCreateDTO[], reportId: number) {
+  private async createOrUpdateParts(parts: FinancialPartCreateDTO[], reportId: FinancialReportModel["id"]) {
     const requests = parts.map<Promise<FinancialPartModel>>(({ id: partId, ...others }) => {
       const id = isNaN(Number(partId)) ? undefined : Number(partId);
-      return this.financialPartRepository.updateOrCreate({ id, ...others }, reportId);
+      return this.financialPartRepository.updateOrCreate({ id,...others }, reportId);
     });
 
     return await Promise.all(requests);

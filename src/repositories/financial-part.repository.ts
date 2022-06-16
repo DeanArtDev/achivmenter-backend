@@ -21,6 +21,7 @@ export default class FinancialPartRepository implements IFinancialPartRepository
     });
   }
 
+  // todo: обратить внимание на "where: { id: id ?? 0 }" при написании тестов
   public async updateOrCreate(
     { id, ...others }: InputFinancialPartModelUpdate,
     financialReportId: FinancialPartModel["financialReportId"],

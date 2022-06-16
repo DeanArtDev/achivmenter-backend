@@ -11,9 +11,9 @@ export default class BaseController implements IBaseController {
 
   constructor(private logger: ILogger) {}
 
-  public create(replay: FastifyReply): FastifyReply {
+  public create<T>(replay: FastifyReply, response: T): void {
     this.logger.log("[BaseController CREATE]", `${replay.request.method}:${replay.request.url}`, `CODE: 201`);
-    return replay.status(201);
+    replay.status(201).send(response);
   }
 
   public ok<T>(replay: FastifyReply, response: T, code: number = 200): void {
@@ -22,7 +22,8 @@ export default class BaseController implements IBaseController {
   }
 
   public error(replay: FastifyReply, error: HTTPError): void {
-    replay.status(error.statusCode).send(error);
+    const { stack, ...others } = error;
+    replay.status(error.statusCode).send(others);
     this.logger.log("[BaseController ERROR]", `${replay.request.method}:${replay.request.url}`, `CODE: ${error.statusCode}`);
   }
 }

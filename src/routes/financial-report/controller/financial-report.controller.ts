@@ -13,7 +13,7 @@ import {
   validationSchemaDelete,
   validationSchemaGetAll,
 } from "../financial-report.validation.schema";
-import { BaseController } from "../../../common/base.controller";
+import { BaseController } from "../../../common/base-controller";
 import { HTTPError, IExceptionFilter } from "../../../error";
 import { AuthGuardMiddleware } from "../../../middlewares";
 
@@ -26,28 +26,28 @@ export default class FinancialReportController extends BaseController implements
       url: this.url,
       method: "GET",
       schema: validationSchemaGetAll,
-      handler: this.onGetAllHandler.bind(this),
+      handler: this.onGetAllFinancialReport.bind(this),
       onRequest: [new AuthGuardMiddleware().execute],
     },
     {
       url: this.url,
       schema: validationSchemaCreate,
       method: "POST",
-      handler: this.onCreateHandler.bind(this),
+      handler: this.onCreateFinancialReport.bind(this),
       onRequest: [new AuthGuardMiddleware().execute],
     },
     {
       url: this.url,
       schema: validationSchemaCreate,
       method: "PUT",
-      handler: this.onUpdateHandler.bind(this),
+      handler: this.onUpdateFinancialReport.bind(this),
       onRequest: [new AuthGuardMiddleware().execute],
     },
     {
       url: this.url + "/:id",
       schema: validationSchemaDelete,
       method: "DELETE",
-      handler: this.onDeleteHandler.bind(this),
+      handler: this.onDeleteFinancialReport.bind(this),
       onRequest: [new AuthGuardMiddleware().execute],
     },
   ];
@@ -60,21 +60,21 @@ export default class FinancialReportController extends BaseController implements
     super(loggerService);
   }
 
-  private async onGetAllHandler(_: FastifyRequest, replay: FastifyReply): Promise<void> {
+  private async onGetAllFinancialReport(_: FastifyRequest, replay: FastifyReply): Promise<void> {
     const reports = await this.financialReportService.getAll();
     this.ok<FinancialReportResponseDTO[]>(replay, reports.map(this.reportResponseAdapter));
   }
 
-  private async onCreateHandler(
+  private async onCreateFinancialReport(
     { body }: FastifyRequest<{ Body: FinancialReportResponseDTO }>,
     replay: FastifyReply,
   ): Promise<void> {
     const { month, year, partCount, parts } = body;
     const report = await this.financialReportService.create({ month, year, partCount, parts });
-    this.create(replay).send(this.reportResponseAdapter(report));
+    this.create<FinancialReportResponseDTO>(replay, this.reportResponseAdapter(report));
   }
 
-  private async onUpdateHandler(
+  private async onUpdateFinancialReport(
     request: FastifyRequest<{ Body: FinancialReportResponseDTO }>,
     replay: FastifyReply,
   ): Promise<void> {
@@ -94,7 +94,7 @@ export default class FinancialReportController extends BaseController implements
     }
   }
 
-  private async onDeleteHandler(
+  private async onDeleteFinancialReport(
     { params }: FastifyRequest<{ Params: { id: string } }>,
     replay: FastifyReply,
   ): Promise<void> {

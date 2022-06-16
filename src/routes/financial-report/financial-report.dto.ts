@@ -1,4 +1,5 @@
 import { UniqID } from "../../types/common.types";
+import { FinancialPartComplete } from "./types";
 
 export type FinancialReportDTO = {
   month: number;
@@ -14,12 +15,13 @@ export type FinancialPartDTO = {
   free: number;
 };
 
-export type FinancialPartComplete = FinancialPartDTO & { id: UniqID };
 export type FinancialReportResponseDTO = Omit<FinancialReportDTO, "parts"> & {
   id: UniqID;
   parts: FinancialPartComplete[];
 };
+
 export type FinancialPartCreateDTO = Omit<FinancialPartComplete, "id"> & { id?: UniqID };
+
 export type FinancialReportCreateDTO = Omit<FinancialReportResponseDTO, "parts"> & {
   parts: FinancialPartCreateDTO[];
 };

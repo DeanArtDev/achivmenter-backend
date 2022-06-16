@@ -18,6 +18,12 @@ import IUserRepository from "./repositories/interfaces/user.repository.interface
 import UserRepository from "./repositories/user.repository";
 import IUserService from "./routes/user/service/user.service.interface";
 import UserService from "./routes/user/service/user.service";
+import ICorrectionRepository from "./repositories/interfaces/correctin.repository.interface";
+import CorrectionRepository from "./repositories/correction.repository";
+import ICorrectionController from "./routes/correction/controller/correction.controller.interface";
+import CorrectionController from "./routes/correction/controller/correction.controller";
+import ICorrectionService from "./routes/correction/service/correction.service.interface";
+import CorrectionService from "./routes/correction/service/correction.service";
 
 const commonModules = new ContainerModule((bind: interfaces.Bind) => {
   bind<IApp>(dependenciesType.IApp).to(App).inSingletonScope();
@@ -43,6 +49,12 @@ const financialModules = new ContainerModule((bind: interfaces.Bind) => {
     .inSingletonScope();
 });
 
+const correctionModules = new ContainerModule((bind: interfaces.Bind) => {
+  bind<ICorrectionController>(dependenciesType.ICorrectionController).to(CorrectionController).inSingletonScope();
+  bind<ICorrectionService>(dependenciesType.ICorrectionService).to(CorrectionService).inSingletonScope();
+  bind<ICorrectionRepository>(dependenciesType.ICorrectionRepository).to(CorrectionRepository).inSingletonScope();
+});
+
 const userModules = new ContainerModule((bind: interfaces.Bind) => {
   bind<IUserController>(dependenciesType.IUserController).to(UserController).inSingletonScope();
   bind<IUserService>(dependenciesType.IUserService).to(UserService).inSingletonScope();
@@ -61,6 +73,7 @@ const bootstrap = () => {
   const container = new Container();
   container.load(commonModules);
   container.load(financialModules);
+  container.load(correctionModules);
   container.load(userModules);
   container.load(pluginModules);
   const app = container.get<IApp>(dependenciesType.IApp);

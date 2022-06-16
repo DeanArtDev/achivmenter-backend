@@ -14,6 +14,10 @@ export const dependenciesType = {
   IUserService: Symbol.for("IUserService"),
   IUserRepository: Symbol.for("IUserRepository"),
 
+  ICorrectionController: Symbol.for("ICorrectionController"),
+  ICorrectionService: Symbol.for("ICorrectionService"),
+  ICorrectionRepository: Symbol.for("ICorrectionRepository"),
+
   IJWTService: Symbol.for("IJWTService"),
 
   // # plugins

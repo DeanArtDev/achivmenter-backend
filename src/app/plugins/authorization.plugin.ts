@@ -1,6 +1,6 @@
 import fp from "fastify-plugin";
 import { inject, injectable } from "inversify";
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyRequest } from "fastify";
 import { FastifyPluginCallback, FastifyPluginOptions } from "fastify/types/plugin";
 import { HookHandlerDoneFunction } from "fastify/types/hooks";
 import { FastifyInstance } from "fastify/types/instance";
@@ -8,12 +8,16 @@ import { IJWTService } from "../../services/jwt-service";
 import { FastifyContextConfig } from "fastify/types/context";
 import { JWTPayload } from "../../services/jwt-service/types";
 import IAppPlugin from "./plugin.interface";
+import { ILogger } from "../../logger";
 import { dependenciesType } from "../../dependencies.types";
 import "reflect-metadata";
 
 @injectable()
 export default class AuthorizationPlugin implements IAppPlugin {
-  constructor(@inject(dependenciesType.IJWTService) private readonly jwtService: IJWTService) {}
+  constructor(
+    @inject(dependenciesType.IJWTService) private readonly jwtService: IJWTService,
+    @inject(dependenciesType.ILogger) private readonly loggerService: ILogger,
+  ) {}
 
   public readonly displayName = "Authorization Plugin";
 
@@ -26,7 +30,7 @@ export default class AuthorizationPlugin implements IAppPlugin {
     done();
   }
 
-  private async onRequestCheckAuthorization(request: FastifyRequest, _: FastifyReply): Promise<void> {
+  private async onRequestCheckAuthorization(request: FastifyRequest): Promise<void> {
     if (!request.headers.authorization) {
       request.context.config = this.setContextConfig(request.context.config, null);
       return;
@@ -37,6 +41,7 @@ export default class AuthorizationPlugin implements IAppPlugin {
       request.context.config = this.setContextConfig(request.context.config, decodedTokenData);
     } catch (e) {
       request.context.config = this.setContextConfig(request.context.config, null);
+      this.loggerService.error(`[AuthorizationPlugin] Something went wrong with JWT verify`, e);
     }
   }
 

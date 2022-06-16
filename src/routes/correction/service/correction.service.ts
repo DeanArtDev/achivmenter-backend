@@ -4,6 +4,7 @@ import ICorrectionRepository from "../../../repositories/interfaces/correctin.re
 import ICorrectionService from "./correction.service.interface";
 import { InputCreateCorrection, InputSearchCorrection, InputUpdateCorrection, CorrectionWithId } from "../types";
 import { FinancialPartComplete } from "../../financial-report/types";
+import Correction from "../../../entities/correction.entity";
 import { dependenciesType } from "../../../dependencies.types";
 
 @injectable()
@@ -13,15 +14,17 @@ export default class CorrectionService implements ICorrectionService {
     private readonly correctionRepository: ICorrectionRepository,
   ) {}
 
-  public async create({ financialPartId, ...others }: InputCreateCorrection): Promise<CorrectionModel | null> {
-    return await this.correctionRepository.create(others, Number(financialPartId));
+  public async create({ financialPartId, name, amount }: InputCreateCorrection): Promise<CorrectionModel | null> {
+    return await this.correctionRepository.create(new Correction(name, amount), Number(financialPartId));
   }
 
   public async update(correction: InputUpdateCorrection): Promise<CorrectionModel | null> {
+    if (!(await this.isCorrectionExisted(Number(correction.id)))) return null;
     return await this.correctionRepository.update(correction);
   }
 
   public async delete(correctionId: CorrectionWithId["id"]): Promise<boolean> {
+    if (!(await this.isCorrectionExisted(Number(correctionId)))) return false;
     return await this.correctionRepository.delete(Number(correctionId));
   }
 
@@ -38,5 +41,9 @@ export default class CorrectionService implements ICorrectionService {
       return await this.correctionRepository.searchByIds(searchRequest.ids.map(Number));
     }
     return [];
+  }
+
+  private async isCorrectionExisted(correctionId: CorrectionModel["id"]): Promise<boolean> {
+    return !(await this.correctionRepository.searchByIds([correctionId]));
   }
 }

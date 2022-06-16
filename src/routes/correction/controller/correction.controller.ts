@@ -89,9 +89,12 @@ export default class CorrectionController extends BaseController implements ICor
     replay: FastifyReply,
   ): Promise<void> {
     const updatedCorrection = await this.correctionService.update(request.body);
-    !updatedCorrection &&
-      this.error(replay, new HTTPError(400, "There is no such a correction to update", request.body));
-    updatedCorrection && this.ok<CorrectionWithId>(replay, this.responseCorrectionAdapter(updatedCorrection));
+    if (!updatedCorrection) {
+      this.error(replay, new HTTPError(400, `There is no such a correction with id: ${request.body.id} to update`));
+      return;
+    }
+
+    this.ok<CorrectionWithId>(replay, this.responseCorrectionAdapter(updatedCorrection));
   }
 
   private async onDeleteCorrectionByFinancialPartId(
@@ -117,7 +120,15 @@ export default class CorrectionController extends BaseController implements ICor
   ): Promise<void> {
     try {
       const isDeleted = await this.correctionService.delete(request.body.correctionId);
-      isDeleted && this.ok<boolean>(replay, isDeleted);
+      if (!isDeleted) {
+        this.error(
+          replay,
+          new HTTPError(400, `There is no such a correction with id: ${request.body.correctionId} to delete`),
+        );
+        return;
+      }
+
+      this.ok<boolean>(replay, isDeleted);
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError) {
         this.error(replay, new HTTPError(400, e.code, e.meta));

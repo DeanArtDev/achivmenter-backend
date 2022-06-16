@@ -39,7 +39,7 @@ export default class CorrectionRepository implements ICorrectionRepository {
 
   public async deleteByFinancialPartId(financialPartId: FinancialPartModel["id"]): Promise<boolean> {
     const deletedResponse = await this.db.client.correctionModel.deleteMany({ where: { financialPartId } });
-    return deletedResponse.count > 0;
+    return !!deletedResponse;
   }
 
   public async update({ id, ...others }: InputUpdateCorrection): Promise<CorrectionModel | null> {

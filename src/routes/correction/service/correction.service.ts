@@ -44,6 +44,6 @@ export default class CorrectionService implements ICorrectionService {
   }
 
   private async isCorrectionExisted(correctionId: CorrectionModel["id"]): Promise<boolean> {
-    return !(await this.correctionRepository.searchByIds([correctionId]));
+    return !!(await this.correctionRepository.searchByIds([correctionId]));
   }
 }

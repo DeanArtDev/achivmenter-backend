@@ -1,6 +1,10 @@
 const CorrectionSchema = {
   name: { type: "string" },
   amount: { type: "number" },
+  type: {
+    type: "string",
+    enum: ["common", "piggyBank", "free"],
+  },
 };
 
 const CorrectionResponseSchema = {
@@ -44,7 +48,7 @@ const CorrectionDeleteSchema = {
 export const validationSchemaDelete = {
   tags: ["Correction"],
   description: "Delete a correction",
-  body: CorrectionDeleteSchema,
+  params: CorrectionDeleteSchema,
   response: { 200: { type: "boolean" } },
 };
 
@@ -57,7 +61,7 @@ const CorrectionDeleteByFinancialPartIdSchema = {
 export const validationSchemaDeleteByFinancialPartId = {
   tags: ["Correction"],
   description: "Delete corrections by financial part id",
-  body: CorrectionDeleteByFinancialPartIdSchema,
+  params: CorrectionDeleteByFinancialPartIdSchema,
   response: { 200: { type: "boolean" } },
 };
 

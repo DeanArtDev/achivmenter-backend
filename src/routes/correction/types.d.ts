@@ -1,9 +1,11 @@
 import { UniqID } from "../../types/common.types";
 import { FinancialPartComplete } from "../financial-report/types";
+import { CorrectionModel } from "@prisma/client";
 
 export type CorrectionDTO = {
   name: string;
   amount: number;
+  type: CorrectionModel["type"]
 };
 
 export type CorrectionWithId = CorrectionDTO & { id: UniqID };

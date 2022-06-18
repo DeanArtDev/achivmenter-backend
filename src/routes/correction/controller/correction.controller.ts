@@ -46,14 +46,14 @@ export default class CorrectionController extends BaseController implements ICor
       schema: validationSchemaUpdate,
     },
     {
-      url: this.url,
+      url: this.url + "/:correctionId",
       method: "DELETE",
       handler: this.onDeleteCorrection.bind(this),
       onRequest: [new AuthGuardMiddleware().execute],
       schema: validationSchemaDelete,
     },
     {
-      url: this.url + "/financial-parts",
+      url: this.url + "/financial-parts/:financialPartId",
       method: "DELETE",
       handler: this.onDeleteCorrectionByFinancialPartId.bind(this),
       onRequest: [new AuthGuardMiddleware().execute],
@@ -98,11 +98,11 @@ export default class CorrectionController extends BaseController implements ICor
   }
 
   private async onDeleteCorrectionByFinancialPartId(
-    request: FastifyRequest<{ Body: InputDeleteByFinancialPartIdCorrection }>,
+    request: FastifyRequest<{ Params: InputDeleteByFinancialPartIdCorrection }>,
     replay: FastifyReply,
   ): Promise<void> {
     try {
-      const isDeleted = await this.correctionService.deleteCorrectionByFinancialPartId(request.body.financialPartId);
+      const isDeleted = await this.correctionService.deleteCorrectionByFinancialPartId(request.params.financialPartId);
       isDeleted && this.ok<boolean>(replay, isDeleted);
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError) {
@@ -115,15 +115,15 @@ export default class CorrectionController extends BaseController implements ICor
   }
 
   private async onDeleteCorrection(
-    request: FastifyRequest<{ Body: InputDeleteCorrection }>,
+    request: FastifyRequest<{ Params: InputDeleteCorrection }>,
     replay: FastifyReply,
   ): Promise<void> {
     try {
-      const isDeleted = await this.correctionService.delete(request.body.correctionId);
+      const isDeleted = await this.correctionService.delete(request.params.correctionId);
       if (!isDeleted) {
         this.error(
           replay,
-          new HTTPError(400, `There is no such a correction with id: ${request.body.correctionId} to delete`),
+          new HTTPError(400, `There is no such a correction with id: ${request.params.correctionId} to delete`),
         );
         return;
       }
@@ -152,6 +152,7 @@ export default class CorrectionController extends BaseController implements ICor
       id: String(correction.id),
       name: correction.name,
       amount: correction.amount,
+      type: correction.type
     };
   }
 }

@@ -7,8 +7,8 @@ import IFinancialReportService from "./financial-report.service.interface";
 import { FinancialPartCreateDTO, FinancialReportCreateDTO, FinancialReportDTO } from "../financial-report.dto";
 import { FinancialReportModelComplete } from "../types";
 import ICorrectionRepository from "../../../repositories/interfaces/correctin.repository.interface";
-import { dependenciesType } from "../../../dependencies.types";
 import FinancialReport from "../../../entities/financial-report.entity";
+import { dependenciesType } from "../../../dependencies.types";
 
 @injectable()
 export default class FinancialReportService implements IFinancialReportService {
@@ -37,13 +37,14 @@ export default class FinancialReportService implements IFinancialReportService {
   }: FinancialReportCreateDTO): Promise<FinancialReportModelComplete> {
     const updatedReport = await this.financialReportRepository.update({ id: Number(reportId), ...others });
 
-    const differentPartIds = difference(
+    const partsForUpdate = parts.filter((p) => !isNaN(Number(p.id)));
+    const partIdsForDelete = difference(
       updatedReport.parts.map((i) => i.id),
-      parts.map((i) => Number(i.id)),
+      partsForUpdate.map((i) => Number(i.id)),
     );
-    await this.deleteUnusedParts(differentPartIds);
-    const newParts = await this.createOrUpdateParts(parts, Number(reportId));
+    partIdsForDelete.length > 0 && (await this.deleteUnusedParts(partIdsForDelete));
 
+    const newParts = await this.createOrUpdateParts(parts, Number(reportId));
     return { ...updatedReport, parts: newParts };
   }
 
@@ -62,7 +63,8 @@ export default class FinancialReportService implements IFinancialReportService {
   private async createOrUpdateParts(parts: FinancialPartCreateDTO[], reportId: FinancialReportModel["id"]) {
     const requests = parts.map<Promise<FinancialPartModel>>(({ id: partId, ...others }) => {
       const id = isNaN(Number(partId)) ? undefined : Number(partId);
-      return this.financialPartRepository.updateOrCreate({ id,...others }, reportId);
+      //todo: добавить обработку ошибок, если приходит id (isNaN) молча не сохраняет.
+      return this.financialPartRepository.updateOrCreate({ id, ...others }, reportId);
     });
 
     return await Promise.all(requests);

@@ -152,6 +152,7 @@ export default class CorrectionController extends BaseController implements ICor
       id: String(correction.id),
       name: correction.name,
       amount: correction.amount,
+      type: correction.type
     };
   }
 }

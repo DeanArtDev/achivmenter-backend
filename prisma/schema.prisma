@@ -43,13 +43,20 @@ model UserModel {
 }
 
 model CorrectionModel {
-  id        Int      @id @default(autoincrement())
+  id        Int            @id @default(autoincrement())
   name      String
   amount    Int
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  type      CorrectionType
 
   financialPartId Int                @map("financial_part_id")
   FinancialPart   FinancialPartModel @relation(fields: [financialPartId], references: [id], onDelete: Cascade)
 
   @@map("corrections")
+}
+
+enum CorrectionType {
+  common
+  piggyBank
+  free
 }

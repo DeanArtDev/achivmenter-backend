@@ -14,8 +14,8 @@ export default class CorrectionService implements ICorrectionService {
     private readonly correctionRepository: ICorrectionRepository,
   ) {}
 
-  public async create({ financialPartId, name, amount }: InputCreateCorrection): Promise<CorrectionModel | null> {
-    return await this.correctionRepository.create(new Correction(name, amount), Number(financialPartId));
+  public async create({ financialPartId, name, amount, type }: InputCreateCorrection): Promise<CorrectionModel | null> {
+    return await this.correctionRepository.create(new Correction(name, amount, type), Number(financialPartId));
   }
 
   public async update(correction: InputUpdateCorrection): Promise<CorrectionModel | null> {

@@ -1,6 +1,10 @@
 const CorrectionSchema = {
   name: { type: "string" },
   amount: { type: "number" },
+  type: {
+    type: "string",
+    enum: ["common", "piggyBank", "free"],
+  },
 };
 
 const CorrectionResponseSchema = {

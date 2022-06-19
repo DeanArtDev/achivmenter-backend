@@ -41,7 +41,7 @@ export default class AuthorizationPlugin implements IAppPlugin {
       request.context.config = this.setContextConfig(request.context.config, decodedTokenData);
     } catch (e) {
       request.context.config = this.setContextConfig(request.context.config, null);
-      this.loggerService.error(`[AuthorizationPlugin] Something went wrong with JWT verify`, e);
+      e !== null && this.loggerService.error(`[AuthorizationPlugin] Something went wrong with JWT verify`, e);
     }
   }
 

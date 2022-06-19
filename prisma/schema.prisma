@@ -15,10 +15,10 @@ model FinancialPartModel {
   free      Int @db.SmallInt
   piggyBank Int @map("biggy_bank") @db.SmallInt
 
-  corectins CorrectionModel[]
-
   financialReportId Int                  @map("financial_report_id")
   FinancialReport   FinancialReportModel @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
+
+  corectins CorrectionModel[]
 
   @@map("financial_parts")
 }

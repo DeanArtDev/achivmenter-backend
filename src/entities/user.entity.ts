@@ -10,7 +10,9 @@ export default class User {
   }
 
   public async encodePassword(password: string, salt: number): Promise<void> {
-    this._password = await hash(password, salt);
+    const result = await hash(password, salt);
+    console.log("encodePassword", password, salt, "result: ", result);
+    this._password = result;
   }
 
   public async comparePassword(password: string): Promise<boolean> {

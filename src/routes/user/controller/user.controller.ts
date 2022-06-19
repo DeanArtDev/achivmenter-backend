@@ -62,9 +62,10 @@ export default class UserController extends BaseController implements IUserContr
   ): Promise<void> {
     const newUser = await this.userService.createUser(request.body);
     if (!newUser) return this.error(replay, new HTTPError(409, "User with this email address already exists"));
-
+    console.log("user", newUser);
     const { id, email } = newUser;
     const token = await this.jwtService.sign({ email });
+    console.log("token", token);
     this.ok<RegistrationResponseDTO>(replay, { user: { id, email }, token });
   }
 }

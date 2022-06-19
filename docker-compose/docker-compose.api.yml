@@ -9,6 +9,9 @@ services:
     ports:
       - published: ${API_PORT}
         target: ${API_PORT}
+      - published: ${DB_STUDIO_PORT}
+        target: ${DB_STUDIO_PORT}
+
     container_name: api-container
     restart: always
 

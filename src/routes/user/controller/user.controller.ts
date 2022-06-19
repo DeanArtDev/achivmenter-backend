@@ -60,8 +60,6 @@ export default class UserController extends BaseController implements IUserContr
     request: FastifyRequest<{ Body: RegistrationRequestDTO }>,
     replay: FastifyReply,
   ): Promise<void> {
-    try {
-    console.log("body", request.body);
     const newUser = await this.userService.createUser(request.body);
     if (!newUser) return this.error(replay, new HTTPError(409, "User with this email address already exists"));
     console.log("user", newUser);
@@ -69,8 +67,5 @@ export default class UserController extends BaseController implements IUserContr
     const token = await this.jwtService.sign({ email });
     console.log("token", token);
     this.ok<RegistrationResponseDTO>(replay, { user: { id, email }, token });
-    } catch (e) {
-      this.ok(replay, e)
-    }
   }
 }

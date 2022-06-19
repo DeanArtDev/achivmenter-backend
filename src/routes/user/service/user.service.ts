@@ -28,7 +28,6 @@ export default class UserService implements IUserService {
     if (isUserExisted) return null;
 
     const newUser = new User(email, password);
-    console.log("env", this.configService.get(envVariable.API_SALT));
     await newUser.encodePassword(password, Number(this.configService.get(envVariable.API_SALT)));
     return await this.userRepository.createUser(newUser);
   }
